@@ -88,7 +88,11 @@ export const addShift = async (
   return "hi";
 };
 
-export const getShifts = async (month: number, special: boolean) => {
+export const getShifts = async (
+  year: number,
+  month: number,
+  special: boolean
+) => {
   const [rows] = await pool.query<RowDataPacket[]>(
     `
       SELECT 
@@ -104,9 +108,9 @@ export const getShifts = async (month: number, special: boolean) => {
         user u1 ON s.worker1_id = u1.id
       LEFT JOIN 
         user u2 ON s.worker2_id = u2.id
-      WHERE MONTH(s.date) = ? AND s.special_event = ?;
+      WHERE YEAR(s.date) = ? AND MONTH(s.date) = ? AND s.special_event = ?;
     `,
-    [month, special]
+    [year, month, special]
   );
   return rows;
 };
@@ -397,7 +401,7 @@ export const getEvents = async () => {
 };
 
 export const useBar = async (date: Date, endDate: Date, title: string) => {
-  console.log(date)
+  console.log(date);
   await pool.query(
     "INSERT INTO bar_usage (start_date, end_date, title) VALUES (?,?,?)",
     [date, endDate, title]

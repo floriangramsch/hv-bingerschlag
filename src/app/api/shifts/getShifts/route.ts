@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: any) {
   try {
-    const { month, special } = await request.json();
+    const { year, month, special } = await request.json();
 
-    const result = await getShifts(month, special);
+    const result = await getShifts(year, month, special);
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {

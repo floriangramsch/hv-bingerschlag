@@ -6,8 +6,8 @@ import { TAssignedShifts } from "../helpers/types";
 
 export default function ShiftPlan() {
   const [shifts, setShifts] = useState<TAssignedShifts[]>([]);
-  const [current, setCurrent] = useState<boolean>(true);
   const [month, setMonth] = useState(() => getMonth());
+  const [year, setYear] = useState(() => getYear());
   const [special, setSpecial] = useState<boolean>(false);
 
   function getMonth() {
@@ -16,9 +16,14 @@ export default function ShiftPlan() {
     return month.getMonth() + 1;
   }
 
+  function getYear() {
+    const currentDate = new Date();
+    return currentDate.getFullYear();
+  }
+
   useEffect(() => {
     getView();
-  }, [month, special, current]);
+  }, [month, special]);
 
   const getView = () => {
     fetch("/api/shifts/getShifts", {
@@ -26,7 +31,7 @@ export default function ShiftPlan() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ month: current ? month : month + 1, special }),
+      body: JSON.stringify({ year: year, month: month, special }),
     })
       .then((response) => response.json())
       .then((data: TAssignedShifts[]) => {
@@ -37,15 +42,90 @@ export default function ShiftPlan() {
       });
   };
 
+  const changeMonth = (advance: boolean) => {
+    if (advance) {
+      if (month === 12) {
+        setMonth(1);
+        setYear(year + 1);
+      } else {
+        setMonth(month + 1);
+      }
+    } else {
+      if (month === 1) {
+        setMonth(12);
+        setYear(year - 1);
+      } else {
+        setMonth(month - 1);
+      }
+    }
+  };
+
+  const convertMonthName = () => {
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    return monthNames[month - 1] + " " + year;
+  };
+
   return (
     <>
       <div className="text-3xl mb-3 flex flex-col">
-        <div>{current ? "Current Month" : "Next Month"}</div>
-        <div>{special ? "Special Events" : "Normal Events"}</div>
+        <div className="flex justify-center text-4xl">{convertMonthName()}</div>
+        <div>{special && "Special Events"}</div>
       </div>
-      <input type="checkbox" onChange={() => setCurrent(!current)} />
-      <input type="checkbox" onChange={() => setSpecial(!special)} />
-      <div className="grid grid-cols-2 mt-3">
+      <div className="flex space-x-5">
+        <i
+          aria-hidden
+          className="fa-solid fa-left-long text-5xl"
+          style={{ color: "#e74c3c" }}
+          onClick={() => changeMonth(false)}
+        />
+        {special ? (
+          <i
+            aria-hidden
+            className="fa-solid fa-star text-5xl"
+            style={{ color: "#e74c3c" }}
+            onClick={() => setSpecial(false)}
+          />
+        ) : (
+          <i
+            aria-hidden
+            className="fa-regular fa-star text-5xl"
+            style={{ color: "#e74c3c" }}
+            onClick={() => setSpecial(true)}
+            // onClick={() => setView("special")}
+          />
+        )}
+        <i
+          aria-hidden
+          className="fa-solid fa-right-long text-5xl"
+          style={{ color: "#e74c3c" }}
+          onClick={() => changeMonth(true)}
+        />
+
+        {/* <input
+          className="w-10 h-10"
+          type="checkbox"
+          onChange={() => setCurrent(!current)}
+        />
+        <input
+          className="w-10 h-10"
+          type="checkbox"
+          onChange={() => setSpecial(!special)}
+        /> */}
+      </div>
+      <div className="grid grid-cols-2 mt-6 gap-2">
         {shifts
           ? shifts.map(
               ({
@@ -62,18 +142,15 @@ export default function ShiftPlan() {
                   key={id}
                   style={{
                     margin: "0",
-                    // marginRight: data.type === 1 ? "10px" : "0",
                   }}
                 >
-                  <div className="font-bold text-lg">
-                    {" "}
+                  <div className="font-bold text-xl">
                     {convertDate(new Date(date))}
                   </div>
                   <div className="text-text text-lg mb-1 mr-4">
-                    {worker1_name}
-                  </div>
-                  <div className="text-text text-lg mb-1 mr-4">
-                    {worker2_name}
+                    <div>{worker1_name}</div>
+                    <div>{worker2_name}</div>
+                    {!worker1_name && !worker2_name && <div>Not manned!</div>}
                   </div>
                 </div>
               )
