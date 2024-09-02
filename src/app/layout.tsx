@@ -16,7 +16,48 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <head>
+        <script
+          src="https://kit.fontawesome.com/1b387810f3.js"
+          crossOrigin="anonymous"
+        />
+      </head>
+      <body className={inter.className}>
+        <div className="flex flex-col justify-center">
+          <div className="flex flex-col items-center mb-20">{children}</div>
+        </div>
+
+        <div className="flex fixed bottom-0 left-0 shadow w-full text-5xl bg-bg border-2 border-primary p-4 justify-evenly">
+          <a href="/shiftPlan">
+            <i
+              aria-hidden
+              className="fa-solid fa-beer-mug-empty"
+              style={{ color: "#e74c3c" }}
+            />
+          </a>
+          <a href="/">
+            <i
+              aria-hidden
+              className="fa-solid fa-house"
+              style={{ color: "#e74c3c" }}
+            />
+          </a>
+          <a href="/barCalendar">
+            <i
+              aria-hidden
+              className="fa-regular fa-calendar"
+              style={{ color: "#e74c3c" }}
+            />
+          </a>
+          <a href="/admin">
+            <i
+              aria-hidden
+              className="fa-solid fa-lock"
+              style={{ color: "#e74c3c" }}
+            />
+          </a>
+        </div>
+      </body>
     </html>
   );
 }
