@@ -67,7 +67,7 @@ const BarCalendar = () => {
       </a>
       <Calendar
         date={date}
-        className="w-screen"
+        className="w-screen mb-10 p-3"
         style={{ height: 600 }}
         localizer={localizer}
         onNavigate={onNavigate}

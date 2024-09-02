@@ -51,7 +51,7 @@ export default function RootLayout({
           <div className="flex flex-col items-center mb-20">{children}</div>
         </div>
 
-        <div className="flex fixed bottom-0 left-0 shadow w-full text-5xl bg-bg border-2 border-primary p-4 justify-evenly">
+        <div className="flex fixed bottom-0 left-0 shadow w-full text-5xl bg-bg border-2 border-primary p-4 justify-evenly z-10">
           <a href="/shiftPlan">
             <i
               aria-hidden
