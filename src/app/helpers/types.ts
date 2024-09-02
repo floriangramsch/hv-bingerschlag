@@ -72,6 +72,13 @@ export type TEvent = {
   eventName: string;
 };
 
+export type TCombinedEvents = {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+}[];
+
 export type TEvents = {
   shifts: Record<number, TEvent>;
   usage: Record<number, TEvent>;

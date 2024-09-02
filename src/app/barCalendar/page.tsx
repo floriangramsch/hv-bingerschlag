@@ -6,12 +6,12 @@ import "moment/locale/de-ch";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "@/app/globals.css";
 import { useCallback, useEffect, useState } from "react";
-import { TEvents } from "../helpers/types";
+import { TCombinedEvents, TEvents } from "../helpers/types";
 
 const localizer = momentLocalizer(moment);
 
 const BarCalendar = () => {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<TCombinedEvents>([]);
   const [view, setView] = useState<View>(Views.MONTH);
 
   const handleOnChangeView = (selectedView: View) => {
