@@ -73,26 +73,26 @@ const BarCalendar = () => {
         onNavigate={onNavigate}
         events={events}
         startAccessor={"start"}
-        // endAccessor={"end"}
-        endAccessor={(event: {
-          id: string;
-          start: Date;
-          end: Date;
-          title: string;
-        }) => {
-          console.log(event);
-          // Check if the event ends on the next day but before 1 AM
-          return moment(event.end);
-          if (
-            moment(event.end).isAfter(moment(event.start).endOf("day")) &&
-            moment(event.end).isBefore(
-              moment(event.start).add(1, "day").hour(2)
-            )
-          ) {
-            return moment(event.start).endOf("day");
-          }
-          return moment(event.end);
-        }}
+        endAccessor={"end"}
+        // endAccessor={(event: {
+        //   id: string;
+        //   start: Date;
+        //   end: Date;
+        //   title: string;
+        // }) => {
+        //   console.log(event);
+        //   // Check if the event ends on the next day but before 1 AM
+        //   return moment(event.end);
+        //   if (
+        //     moment(event.end).isAfter(moment(event.start).endOf("day")) &&
+        //     moment(event.end).isBefore(
+        //       moment(event.start).add(1, "day").hour(2)
+        //     )
+        //   ) {
+        //     return moment(event.start).endOf("day");
+        //   }
+        //   return moment(event.end);
+        // }}
         defaultView="month"
         view={view}
         views={["month", "day", "agenda"]}
