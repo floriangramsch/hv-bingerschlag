@@ -147,6 +147,7 @@ export default function ShiftPlan() {
                   <div className="font-bold text-xl">
                     {convertDate(new Date(date))}
                   </div>
+                  <div>{special_name}</div>
                   <div className="text-text text-lg mb-1 mr-4">
                     <div>{worker1_name}</div>
                     <div>{worker2_name}</div>

@@ -6,7 +6,7 @@ import UserCreation from "@/components/admin/UserCreation";
 import { useState, useEffect, KeyboardEvent } from "react";
 
 export default function Admin() {
-  const debug = true;
+  const debug = false;
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(() => {
