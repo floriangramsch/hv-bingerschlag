@@ -95,9 +95,10 @@ export default function ShiftAssignment() {
                               name="shiftOption"
                               id={surveyId}
                               checked={user.assigned}
-                              onClick={() =>
-                                handleUserItemClick(surveyId, surveyShiftId)
-                              }
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                handleUserItemClick(surveyId, surveyShiftId);
+                              }}
                             />
                           </div>
                         );
