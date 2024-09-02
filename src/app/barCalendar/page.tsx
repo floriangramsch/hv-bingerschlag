@@ -3,8 +3,7 @@
 import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/de-ch";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import "@/app/globals.css";
+import "@/app/calendar.css";
 import { useCallback, useEffect, useState } from "react";
 import { TCombinedEvents, TEvents } from "../helpers/types";
 
@@ -68,7 +67,8 @@ const BarCalendar = () => {
       </a>
       <Calendar
         date={date}
-        style={{ height: 600, width: 350 }}
+        className="w-screen"
+        style={{ height: 600 }}
         localizer={localizer}
         onNavigate={onNavigate}
         events={events}
