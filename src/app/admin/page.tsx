@@ -12,18 +12,13 @@ export default function Admin() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedIsAdmin = localStorage.getItem("isAdmin");
+      console.log("is", storedIsAdmin === "true");
       setIsAdmin(storedIsAdmin === "true" || debug);
     }
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("isAdmin", String(isAdmin));
-    }
-  }, [isAdmin]);
-
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.keyCode === 13) {
+    if (event.key === "Enter") {
       loginAdmin();
     }
   };
@@ -43,6 +38,7 @@ export default function Admin() {
       .then((success) => {
         if (success) {
           setIsAdmin(true);
+          localStorage.setItem("isAdmin", "true");
         } else {
           alert("Falsches Password!");
           const pwInput = document.getElementById(
@@ -56,6 +52,11 @@ export default function Admin() {
       });
   };
 
+  const logout = () => {
+    setIsAdmin(false);
+    localStorage.setItem("isAdmin", "false");
+  };
+
   return (
     <>
       {isAdmin ? (
@@ -66,7 +67,7 @@ export default function Admin() {
           {/* Logout */}
           <button
             className="inline-block p-1 ml-2 text-base font-bold bg-button border-none rounded cursor-pointer"
-            onClick={() => setIsAdmin(false)}
+            onClick={logout}
           >
             Logout
           </button>
