@@ -47,33 +47,30 @@ export default function Login({
   return (
     <>
       <div className="flex text-center justify-center p-4 mt-1 mb-4 rounded text-xl font-bold bg-primary">
-        Who are you?
+        Click your name to proceed
       </div>
-      <div className="mt-32 flex flex-col justify-center bg-bg text-text border-2 border-primary p-5">
-        {/* <Select
-          instanceId="nameasd"
-          className="basic-single select-control text-black"
-          classNamePrefix="select"
-          defaultValue={null}
-          isSearchable={true}
-          name="color"
-          options={userOptions}
-          onChange={(e) => changeUser(e)}
-        /> */}
-        {userOptions &&
-          userOptions.map((user) => {
-            return (
-              <div key={user.value} onClick={() => changeUser(user)}>
-                {user.first_name}
-              </div>
-            );
-          })}
-        <button
+      <div className="mt-16 flex flex-col  bg-bg text-text border-2 border-primary p-5">
+        <div className="grid grid-cols-3 gap-3">
+          {userOptions &&
+            userOptions.map((user) => {
+              return (
+                <div
+                  className="w-20 h-20 bg-secondory border border-bg-lighter flex justify-center items-center"
+                  key={user.value}
+                  // onClick={() => changeUser(user)}
+                  onClick={() => setName(user)}
+                >
+                  {user.first_name}
+                </div>
+              );
+            })}
+        </div>
+        {/* <button
           className="inline-block py-2 px-4 m-4 text-lg text-bold text-white bg-button border-none rounded cursor-pointer"
           onClick={loginUser}
         >
           Join
-        </button>
+        </button> */}
       </div>
     </>
   );
