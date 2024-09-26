@@ -165,13 +165,29 @@ export const addUser = async (user: any) => {
 
 export const createShift = async (shift: any) => {
   const { date, endDate, specialEvent, eventName } = shift;
+
+  // Validate that date is before endDate
+  if (new Date(date) >= new Date(endDate)) {
+    return "Start should be before End";
+  }
+
+  // Check if a shift with the same date already exists
+  const [existingShifts] = await pool.query<RowDataPacket[]>(
+    "SELECT * FROM shift WHERE date < ? AND end_date > ?",
+    [endDate, date]
+  );
+
+  if (existingShifts.length > 0) {
+    return "Shift with this date already exists!";
+  }
+
   await pool.query<RowDataPacket[]>(
     `
       INSERT INTO shift (date, end_date, special_event, special_name) VALUES (?,?,?,?)
     `,
     [date, endDate, specialEvent, eventName]
   );
-  return "created Shift!";
+  return "Survey Shift created successfully!";
 };
 
 function getMondaysInOddWeeks(year: number, month: number): Date[] {
@@ -227,10 +243,18 @@ export const createMonth = async (month: number) => {
       start.setHours(21);
       let end = new Date(date);
       end.setHours(23);
-      await pool.query<RowDataPacket[]>(
-        "INSERT INTO shift (date, end_date, special_event, special_name) VALUES (?, ?, ?, ?)",
-        [start, end, 0, "Bar"]
+
+      const [existingShift1] = await pool.query<RowDataPacket[]>(
+        "SELECT * FROM shift WHERE date < ? AND end_date > ?",
+        [end, start]
       );
+
+      if (existingShift1.length === 0) {
+        await pool.query<RowDataPacket[]>(
+          "INSERT INTO shift (date, end_date, special_event, special_name) VALUES (?, ?, ?, ?)",
+          [start, end, 0, "Bar"]
+        );
+      }
 
       // Shift 2
       start = new Date(date);
@@ -238,10 +262,18 @@ export const createMonth = async (month: number) => {
       end = new Date(date);
       end.setHours(1);
       end.setDate(end.getDate() + 1);
-      await pool.query<RowDataPacket[]>(
-        "INSERT INTO shift (date, end_date, special_event, special_name) VALUES (?, ?, ?, ?)",
-        [start, end, 0, "Bar"]
+
+      const [existingShift2] = await pool.query<RowDataPacket[]>(
+        "SELECT * FROM shift WHERE date < ? AND end_date > ?",
+        [end, start]
       );
+
+      if (existingShift2.length === 0) {
+        await pool.query<RowDataPacket[]>(
+          "INSERT INTO shift (date, end_date, special_event, special_name) VALUES (?, ?, ?, ?)",
+          [start, end, 0, "Bar"]
+        );
+      }
     }
   }
   return "created Month!";

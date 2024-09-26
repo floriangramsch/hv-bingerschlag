@@ -48,9 +48,9 @@ const ShiftCreation = () => {
       }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (msg: string) => {
       setMonth(getNextMonth());
-      setSurveyShiftNotification("Survey Shift created successfully!");
+      setSurveyShiftNotification(msg);
       setTimeout(() => setSurveyShiftNotification(""), 3000);
       queryClient.invalidateQueries({ queryKey: ["shifts"] });
     },
