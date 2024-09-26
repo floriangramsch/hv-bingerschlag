@@ -1,57 +1,55 @@
 import { convertDate } from "@/app/helpers/functions";
 import { TSelectUser, TShift } from "@/app/helpers/types";
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import Select from "react-select";
 
 export default function ShiftSelection({ user }: { user: TSelectUser }) {
   const [selectedOptions, setSelectedOptions] = useState<
-    Record<number, string>[]
+    Record<number, string>
   >([]);
-  const [shifts, setShifts] = useState<TShift[]>();
 
-  useEffect(() => {
-    getShifts();
-    setSelectedOptions({
-      ...selectedOptions,
-    });
-  }, []);
-
-  const getShifts = () => {
-    fetch("/api/shifts/getUnassignedShifts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: String(user.value),
-    })
-      .then((response) => response.json())
-      .then((unassignedShifts: TShift[]) => {
-        setShifts(unassignedShifts);
-        const opts: any = {};
-        unassignedShifts.forEach((unassignedShift) => {
-          if (unassignedShift.availability) {
-            switch (unassignedShift.availability) {
-              case -1:
-                opts[unassignedShift.id] = "false";
-                break;
-              case 0:
-                opts[unassignedShift.id] = "maybe";
-                break;
-              case 1:
-                opts[unassignedShift.id] = "true";
-                break;
-              case 99:
-                opts[unassignedShift.id] = "dontknow";
-                break;
-              default:
-                break;
-            }
-          }
-        });
-        setSelectedOptions(opts);
+  const {
+    data: shifts,
+    isLoading,
+    error,
+  } = useQuery<TShift[]>({
+    queryKey: ["unassignedShifts", user.value],
+    queryFn: async () => {
+      const response = await fetch("/api/shifts/getUnassignedShifts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: String(user.value),
       });
-  };
+      const unassignedShifts: TShift[] = await response.json();
+      const opts: Record<number, string> = {};
+      unassignedShifts.forEach((unassignedShift) => {
+        if (unassignedShift.availability !== undefined) {
+          switch (unassignedShift.availability) {
+            case -1:
+              opts[unassignedShift.id] = "false";
+              break;
+            case 0:
+              opts[unassignedShift.id] = "maybe";
+              break;
+            case 1:
+              opts[unassignedShift.id] = "true";
+              break;
+            case 99:
+              opts[unassignedShift.id] = "dontknow";
+              break;
+            default:
+              break;
+          }
+        }
+      });
+      setSelectedOptions(opts);
+      return unassignedShifts;
+    },
+  });
 
   const onSelectChange = (
     shift_id: number,
@@ -98,6 +96,9 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
     }
   };
 
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading shifts</div>;
+
   return (
     <>
       <div className="flex flex-col items-center">
@@ -105,40 +106,36 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
           Welcome {user.first_name}
         </div>
         <div className="flex flex-col mb-2">
-          {shifts ? (
-            shifts.map(
-              ({ id, specialEvent, specialName, date, availability }) => {
-                return (
-                  <div
-                    className="flex grid-cols-2 justify-between "
-                    key={id}
+          {shifts?.map(
+            ({ id, specialEvent, specialName, date, availability }) => {
+              return (
+                <div
+                  className="flex grid-cols-2 justify-between "
+                  key={id}
+                  style={{
+                    backgroundColor: specialEvent ? "#1f2b37" : "inherit",
+                  }}
+                >
+                  <span
                     style={{
-                      backgroundColor: specialEvent ? "#1f2b37" : "inherit",
+                      paddingRight: "2rem",
                     }}
                   >
-                    <span
-                      style={{
-                        paddingRight: "2rem",
-                      }}
-                    >
-                      {convertDate(new Date(date))}
-                      <br />
-                      {specialName && specialName}
-                    </span>
-                    <Select
-                      id={String(id)}
-                      className="select-control text-black"
-                      classNamePrefix="select"
-                      options={options}
-                      defaultValue={getOptionByAvailability(availability)}
-                      onChange={(e) => e && onSelectChange(id, e)}
-                    />
-                  </div>
-                );
-              }
-            )
-          ) : (
-            <div>No shifts available</div>
+                    {convertDate(new Date(date))}
+                    <br />
+                    {specialName && specialName}
+                  </span>
+                  <Select
+                    id={String(id)}
+                    className="select-control text-black"
+                    classNamePrefix="select"
+                    options={options}
+                    defaultValue={getOptionByAvailability(availability)}
+                    onChange={(e) => e && onSelectChange(id, e)}
+                  />
+                </div>
+              );
+            }
           )}
           {shifts && (
             <button

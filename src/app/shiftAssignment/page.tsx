@@ -29,8 +29,6 @@ export default function ShiftAssignment() {
       },
       {}
     );
-    console.log(shiftOptions);
-    console.log(filtered);
     const data = JSON.stringify(filtered);
 
     fetch("/api/admin/assignShifts", {
