@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const ShiftCreation = () => {
+  const queryClient = useQueryClient();
   const [date, setDay] = useState(getTodayDate());
   const [endDate, setEndDay] = useState(getTodayDate());
   const [surveyShiftNotification, setSurveyShiftNotification] =
@@ -32,35 +34,61 @@ const ShiftCreation = () => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
-  const createShift = () => {
-    fetch("/api/admin/createShift", {
-      method: "Post",
-      body: JSON.stringify({ date, endDate, specialEvent, eventName }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then(() => {
-        setMonth(getNextMonth());
-        setSurveyShiftNotification("Survey Shift created successfully!");
-        setTimeout(() => setSurveyShiftNotification(""), 3000);
+  const createShiftMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/admin/createShift", {
+        method: "POST",
+        body: JSON.stringify({ date, endDate, specialEvent, eventName }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+      if (!response.ok) {
+        throw new Error("Failed to create shift");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      setMonth(getNextMonth());
+      setSurveyShiftNotification("Survey Shift created successfully!");
+      setTimeout(() => setSurveyShiftNotification(""), 3000);
+      queryClient.invalidateQueries({ queryKey: ["shifts"] });
+    },
+    onError: (error: Error) => {
+      alert(error.message);
+    },
+  });
+
+  const createMonthMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/admin/createMonth", {
+        method: "POST",
+        body: JSON.stringify(month),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create month");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      setSurveyNotification("Survey created successfully!");
+      setTimeout(() => setSurveyNotification(""), 3000);
+      queryClient.invalidateQueries({ queryKey: ["shifts"] });
+    },
+    onError: (error: Error) => {
+      alert(error.message);
+    },
+  });
+
+  const createShift = () => {
+    createShiftMutation.mutate();
   };
 
   const createMonth = () => {
-    fetch("/api/admin/createMonth", {
-      method: "Post",
-      body: JSON.stringify(month),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then(() => {
-        setSurveyNotification("Survey created successfully!");
-        setTimeout(() => setSurveyNotification(""), 3000);
-      });
+    createMonthMutation.mutate();
   };
 
   return (
@@ -91,9 +119,10 @@ const ShiftCreation = () => {
       />
       <button
         className="inline-block px-5 py-3 bg-button m-4 text-base font-bold text-text border-none rounded cursor-pointer"
-        onClick={() => createShift()}
+        onClick={createShift}
+        disabled={createShiftMutation.isPending}
       >
-        Create Shift
+        {createShiftMutation.isPending ? "Creating..." : "Create Shift"}
       </button>
       {surveyShiftNotification && (
         <div className="text-text text-xl mb-1 mr-3">
@@ -109,9 +138,10 @@ const ShiftCreation = () => {
         />
         <button
           className="inline-block px-5 py-3 bg-button m-4 text-base font-bold text-text border-none rounded cursor-pointer"
-          onClick={() => createMonth()}
+          onClick={createMonth}
+          disabled={createMonthMutation.isPending}
         >
-          Create Shift Month
+          {createMonthMutation.isPending ? "Creating..." : "Create Shift Month"}
         </button>
         {surveyNotification && (
           <div className="text-text text-xl mb-1 mr-3">

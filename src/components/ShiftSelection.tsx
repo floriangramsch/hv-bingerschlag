@@ -1,7 +1,7 @@
 import { convertDate } from "@/app/helpers/functions";
 import { TSelectUser, TShift } from "@/app/helpers/types";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
 import Select from "react-select";
 

@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { convertDate } from "../helpers/functions";
 import { TAssignedShifts } from "../helpers/types";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ShiftPlan() {
-  const [shifts, setShifts] = useState<TAssignedShifts[]>([]);
   const [month, setMonth] = useState(() => getMonth());
   const [year, setYear] = useState(() => getYear());
   const [special, setSpecial] = useState<boolean>(false);
@@ -21,26 +21,23 @@ export default function ShiftPlan() {
     return currentDate.getFullYear();
   }
 
-  useEffect(() => {
-    getView();
-  }, [month, special]);
-
-  const getView = () => {
-    fetch("/api/shifts/getShifts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ year: year, month: month, special }),
-    })
-      .then((response) => response.json())
-      .then((data: TAssignedShifts[]) => {
-        setShifts(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching shifts:", error);
+  const {
+    data: shifts,
+    isLoading,
+    error,
+  } = useQuery<TAssignedShifts[]>({
+    queryKey: ["assignedShifts", year, month, special],
+    queryFn: async () => {
+      const response = await fetch("/api/shifts/getShifts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ year, month, special }),
       });
-  };
+      return await response.json();
+    },
+  });
 
   const changeMonth = (advance: boolean) => {
     if (advance) {
@@ -77,6 +74,9 @@ export default function ShiftPlan() {
     ];
     return monthNames[month - 1] + " " + year;
   };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading shifts</div>;
 
   return (
     <>
@@ -126,37 +126,35 @@ export default function ShiftPlan() {
         /> */}
       </div>
       <div className="grid grid-cols-2 mt-6 gap-2">
-        {shifts
-          ? shifts.map(
-              ({
-                id,
-                date,
-                end_date,
-                worker1_name,
-                worker2_name,
-                special_event,
-                special_name,
-              }) => (
-                <div
-                  className="my-4 border border-secondory rounded p-2 text-text shadow"
-                  key={id}
-                  style={{
-                    margin: "0",
-                  }}
-                >
-                  <div className="font-bold text-xl">
-                    {convertDate(new Date(date))}
-                  </div>
-                  <div>{special_name}</div>
-                  <div className="text-text text-lg mb-1 mr-4">
-                    <div>{worker1_name}</div>
-                    <div>{worker2_name}</div>
-                    {!worker1_name && !worker2_name && <div>Not manned!</div>}
-                  </div>
-                </div>
-              )
-            )
-          : "No Data"}
+        {shifts?.map(
+          ({
+            id,
+            date,
+            end_date,
+            worker1_name,
+            worker2_name,
+            special_event,
+            special_name,
+          }) => (
+            <div
+              className="my-4 border border-secondory rounded p-2 text-text shadow"
+              key={id}
+              style={{
+                margin: "0",
+              }}
+            >
+              <div className="font-bold text-xl">
+                {convertDate(new Date(date))}
+              </div>
+              <div>{special_name}</div>
+              <div className="text-text text-lg mb-1 mr-4">
+                <div>{worker1_name}</div>
+                <div>{worker2_name}</div>
+                {!worker1_name && !worker2_name && <div>Not manned!</div>}
+              </div>
+            </div>
+          )
+        )}
       </div>
     </>
   );

@@ -3,59 +3,80 @@
 import Mailer from "@/components/admin/Mailer";
 import ShiftCreation from "@/components/admin/ShiftCreation";
 import UserCreation from "@/components/admin/UserCreation";
-import { useState, useEffect, KeyboardEvent } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { KeyboardEvent } from "react";
 
 export default function Admin() {
-  const debug = false;
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedIsAdmin = localStorage.getItem("isAdmin");
-      console.log("is", storedIsAdmin === "true");
-      setIsAdmin(storedIsAdmin === "true" || debug);
-    }
-  }, []);
+  const {
+    data: isAdmin,
+    isLoading,
+    error,
+  } = useQuery<boolean>({
+    queryKey: ["isAdmin"],
+    queryFn: async () => {
+      if (typeof window !== "undefined") {
+        const storedIsAdmin = localStorage.getItem("isAdmin");
+        return storedIsAdmin === "true";
+      }
+      return false;
+    },
+  });
 
-  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      loginAdmin();
-    }
-  };
+  const loginMutation = useMutation({
+    mutationFn: async (password: string) => {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(password),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const success = await response.json();
+      if (success) {
+        localStorage.setItem("isAdmin", "true");
+        return true;
+      } else {
+        throw new Error("Falsches Password!");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+    },
+    onError: (error: Error) => {
+      alert(error.message);
+      const pwInput = document.getElementById("password") as HTMLInputElement;
+      pwInput.value = "";
+    },
+  });
 
   const loginAdmin = () => {
     const password = (document.getElementById("password") as HTMLInputElement)
       ?.value;
-
-    fetch("/api/auth/login", {
-      method: "POST",
-      body: JSON.stringify(password),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((success) => {
-        if (success) {
-          setIsAdmin(true);
-          localStorage.setItem("isAdmin", "true");
-        } else {
-          alert("Falsches Password!");
-          const pwInput = document.getElementById(
-            "password"
-          ) as HTMLInputElement;
-          pwInput.value = "";
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    loginMutation.mutate(password);
   };
 
-  const logout = () => {
-    setIsAdmin(false);
-    localStorage.setItem("isAdmin", "false");
+  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      const password = (document.getElementById("password") as HTMLInputElement)
+        ?.value;
+      loginMutation.mutate(password);
+    }
   };
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      localStorage.setItem("isAdmin", "false");
+      return false;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+    },
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading admin status</div>;
 
   return (
     <>
@@ -67,7 +88,7 @@ export default function Admin() {
           {/* Logout */}
           <button
             className="inline-block p-1 ml-2 text-base font-bold bg-button border-none rounded cursor-pointer"
-            onClick={logout}
+            onClick={() => logoutMutation.mutate()}
           >
             Logout
           </button>

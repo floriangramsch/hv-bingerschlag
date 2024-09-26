@@ -6,18 +6,18 @@ import "moment/locale/de-ch";
 import "@/app/calendar.css";
 import { useCallback, useEffect, useState } from "react";
 import { TCombinedEvents, TEvents } from "../helpers/types";
+import { useQuery } from "@tanstack/react-query";
 
 const localizer = momentLocalizer(moment);
 
 const BarCalendar = () => {
-  const [events, setEvents] = useState<TCombinedEvents>([]);
+  const [date, setDate] = useState(new Date());
   const [view, setView] = useState<View>(Views.MONTH);
 
   const handleOnChangeView = (selectedView: View) => {
     setView(selectedView);
   };
 
-  const [date, setDate] = useState(new Date());
   const onNavigate = useCallback(
     (newDate: Date) => {
       return setDate(newDate);
@@ -25,38 +25,38 @@ const BarCalendar = () => {
     [setDate]
   );
 
-  useEffect(() => {
-    getView();
-  }, []);
-
-  const getView = () => {
-    fetch("/api/events/getEvents")
-      .then((response) => response.json())
-      .then((data: TEvents) => {
-        const events = Object.entries(data.shifts).map(([id, event]) => {
-          const startDate = moment(event.date).toDate();
-          const endDate = moment(event.endDate).toDate();
-          return {
-            id: id,
-            title: event.eventName,
-            start: startDate,
-            end: endDate,
-          };
-        });
-        const usage = Object.entries(data.usage).map(([id, event]) => {
-          const startDate = moment(event.date).toDate();
-          const endDate = moment(event.endDate).toDate();
-          return {
-            id: id,
-            title: event.eventName,
-            start: startDate,
-            end: endDate,
-          };
-        });
-        const combinedEvents = [...events, ...usage];
-        setEvents(combinedEvents);
+  const {
+    data: events,
+    isLoading,
+    error,
+  } = useQuery<TCombinedEvents>({
+    queryKey: ["events"],
+    queryFn: async () => {
+      const response = await fetch("/api/events/getEvents");
+      const data: TEvents = await response.json();
+      const events = Object.entries(data.shifts).map(([id, event]) => {
+        const startDate = moment(event.date).toDate();
+        const endDate = moment(event.endDate).toDate();
+        return {
+          id: id,
+          title: event.eventName,
+          start: startDate,
+          end: endDate,
+        };
       });
-  };
+      const usage = Object.entries(data.usage).map(([id, event]) => {
+        const startDate = moment(event.date).toDate();
+        const endDate = moment(event.endDate).toDate();
+        return {
+          id: id,
+          title: event.eventName,
+          start: startDate,
+          end: endDate,
+        };
+      });
+      return [...events, ...usage];
+    },
+  });
 
   return (
     <div>

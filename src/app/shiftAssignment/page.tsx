@@ -1,21 +1,48 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { convertDate } from "../helpers/functions";
 import { TShiftsToAssign } from "../helpers/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function ShiftAssignment() {
-  const [shifts, setShifts] = useState<TShiftsToAssign>();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    getView();
-  }, []);
+  const {
+    data: shifts,
+    isLoading,
+    error,
+  } = useQuery<TShiftsToAssign>({
+    queryKey: ["surveysToAssign"],
+    queryFn: async () => {
+      const response = await fetch("/api/admin/getSurveysToAssign");
+      return await response.json();
+    },
+  });
 
-  const getView = () => {
-    fetch("/api/admin/getSurveysToAssign")
-      .then((response) => response.json())
-      .then((data: TShiftsToAssign) => setShifts(data));
-  };
+  const mutation = useMutation({
+    mutationFn: async (filtered: Record<string, boolean>) => {
+      const response = await fetch("/api/admin/assignShifts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(filtered),
+      });
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      if (data === "Already Full") {
+        window.alert("Already full");
+      } else {
+        window.location.href = "/shiftPlan";
+      }
+      queryClient.invalidateQueries({ queryKey: ["surveysToAssign"] });
+    },
+    onError: (error: Error) => {
+      console.error("Fehler beim Hinzufügen der Schichten:", error);
+    },
+  });
 
   const assignShifts = () => {
     const shiftOptions = Array.from(
@@ -29,24 +56,7 @@ export default function ShiftAssignment() {
       },
       {}
     );
-    const data = JSON.stringify(filtered);
-
-    fetch("/api/admin/assignShifts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: data,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data === "Already Full") {
-          window.alert("Already full");
-        } else {
-          window.location.href = "/shiftPlan";
-        }
-      })
-      .catch((e) => console.error("Fehler beim Hinzufügen der Schichten:", e));
+    mutation.mutate(filtered);
   };
 
   const handleUserItemClick = (surveyId: string, surveyShiftId: string) => {
@@ -56,6 +66,9 @@ export default function ShiftAssignment() {
       checkbox.checked = !checkbox.checked;
     }
   };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading surveys</div>;
 
   return (
     <>
