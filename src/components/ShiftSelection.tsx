@@ -1,5 +1,6 @@
 import { convertDate } from "@/app/helpers/functions";
 import { TSelectUser, TShift } from "@/app/helpers/types";
+import useSendTelegram from "@/app/helpers/useSendTelegram";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useState } from "react";
@@ -61,6 +62,8 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
     });
   };
 
+  const sendTelegram = useSendTelegram();
+
   const addSurvey = () => {
     const data = JSON.stringify([user.value, selectedOptions]);
 
@@ -72,7 +75,11 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
       body: data,
     })
       .then((response) => response.json())
-      .then((data) => (window.location.href = "/surveyOverview"))
+      .then(async (data) => {
+        sendTelegram.mutate(user.first_name + " hat sich eingetragen");
+
+        window.location.href = "/surveyOverview";
+      })
       .catch((e) => console.error("Fehler beim Hinzufügen der Umfrage:", e));
   };
 

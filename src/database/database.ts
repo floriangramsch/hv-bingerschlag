@@ -1,3 +1,4 @@
+import useSendTelegram from "@/app/helpers/useSendTelegram";
 import mysql, { RowDataPacket } from "mysql2/promise";
 
 // Erstelle eine Verbindung zur MariaDB-Datenbank
@@ -39,7 +40,7 @@ export const getUnassignedShifts = async (user_id: number) => {
   return result;
 };
 
-export const addShift = async (
+export const addSurvey = async (
   selectedOptions: [number, Record<number, string>]
 ) => {
   const user_id = selectedOptions[0];

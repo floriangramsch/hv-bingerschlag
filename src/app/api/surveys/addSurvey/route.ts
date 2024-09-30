@@ -1,4 +1,5 @@
-import { addShift, getUnassignedShifts } from "@/database/database";
+import useSendTelegram from "@/app/helpers/useSendTelegram";
+import { addSurvey } from "@/database/database";
 import { NextResponse } from "next/server";
 
 export async function POST(request: any) {
@@ -6,7 +7,7 @@ export async function POST(request: any) {
     const selectedOptions: [number, Record<number, string>] =
       await request.json();
 
-    const result = await addShift(selectedOptions);
+    const result = await addSurvey(selectedOptions);
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
