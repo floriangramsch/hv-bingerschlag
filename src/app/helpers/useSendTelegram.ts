@@ -4,7 +4,7 @@ const useSendTelegram = () =>
   useMutation({
     mutationFn: async (msg: string) => {
       const response = await fetch(
-        "https://telegram.floxsite.de:2604/message",
+        "https://telegram.floxsite.de:2604/barMessage",
         {
           method: "POST",
           headers: {
