@@ -75,10 +75,10 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
       body: data,
     })
       .then((response) => response.json())
-      .then(async (data) => {
-        sendTelegram.mutate(user.first_name + " hat sich eingetragen");
-
-        window.location.href = "/surveyOverview";
+      .then(async () => {
+        sendTelegram.mutate(user.first_name + " hat sich eingetragen", {
+          onSuccess: () => (window.location.href = "/surveyOverview"),
+        });
       })
       .catch((e) => console.error("Fehler beim Hinzufügen der Umfrage:", e));
   };
