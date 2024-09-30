@@ -58,6 +58,9 @@ const BarCalendar = () => {
     },
   });
 
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading users</div>;
+
   return (
     <div>
       <a href="/barCalendar/barUsage">
