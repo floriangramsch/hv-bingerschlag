@@ -1,4 +1,5 @@
 import { TSelectUser, TUser } from "@/app/helpers/types";
+import useIsAdmin from "@/app/helpers/useIsAdmin";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Login({
@@ -19,9 +20,12 @@ export default function Login({
         value: user.id,
         label: `${user.first_name} ${user.last_name}`,
         first_name: user.first_name,
+        registered: user.registered,
       }));
     },
   });
+
+  const { data: isAdmin } = useIsAdmin();
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading users</div>;
@@ -37,7 +41,10 @@ export default function Login({
             userOptions.map((user) => {
               return (
                 <div
-                  className="w-20 h-20 bg-secondory border border-bg-lighter flex justify-center items-center"
+                  className={`w-20 h-20 ${
+                    isAdmin &&
+                    (user.registered ? "border-green-500" : "border-red-500")
+                  } border border-bg-lighter flex justify-center items-center`}
                   key={user.value}
                   onClick={() => setName(user)}
                 >

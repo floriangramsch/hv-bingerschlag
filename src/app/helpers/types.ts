@@ -11,6 +11,7 @@ export type TSelectUser = {
   value: number;
   label: string;
   first_name: string;
+  registered: boolean;
 };
 
 export type DShift = {

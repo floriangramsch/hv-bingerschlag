@@ -5,24 +5,12 @@ import ShiftCreation from "@/components/admin/ShiftCreation";
 import UserCreation from "@/components/admin/UserCreation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { KeyboardEvent } from "react";
+import useIsAdmin from "../helpers/useIsAdmin";
 
 export default function Admin() {
   const queryClient = useQueryClient();
 
-  const {
-    data: isAdmin,
-    isLoading,
-    error,
-  } = useQuery<boolean>({
-    queryKey: ["isAdmin"],
-    queryFn: async () => {
-      if (typeof window !== "undefined") {
-        const storedIsAdmin = localStorage.getItem("isAdmin");
-        return storedIsAdmin === "true";
-      }
-      return false;
-    },
-  });
+  const { data: isAdmin, isLoading, error } = useIsAdmin();
 
   const loginMutation = useMutation({
     mutationFn: async (password: string) => {
