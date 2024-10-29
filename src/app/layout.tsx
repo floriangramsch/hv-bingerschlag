@@ -4,6 +4,7 @@ import "./globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import QueryProvider from "@/components/QueryProvider";
 import "react-toastify/dist/ReactToastify.css";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -57,37 +58,7 @@ export default function RootLayout({
             <QueryProvider>{children}</QueryProvider>
           </div>
         </div>
-
-        <div className="flex fixed bottom-0 left-0 shadow w-full text-5xl bg-bg border-2 border-primary p-4 justify-evenly z-10">
-          <a href="/shiftPlan">
-            <i
-              aria-hidden
-              className="fa-solid fa-beer-mug-empty"
-              style={{ color: "#e74c3c" }}
-            />
-          </a>
-          <a href="/">
-            <i
-              aria-hidden
-              className="fa-solid fa-house"
-              style={{ color: "#e74c3c" }}
-            />
-          </a>
-          <a href="/barCalendar">
-            <i
-              aria-hidden
-              className="fa-regular fa-calendar"
-              style={{ color: "#e74c3c" }}
-            />
-          </a>
-          <a href="/admin">
-            <i
-              aria-hidden
-              className="fa-solid fa-lock"
-              style={{ color: "#e74c3c" }}
-            />
-          </a>
-        </div>
+        <Footer />
       </body>
     </html>
   );

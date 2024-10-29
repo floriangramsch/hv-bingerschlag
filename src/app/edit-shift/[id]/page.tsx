@@ -24,9 +24,9 @@ export default function Page() {
         id: shift.id,
         date: shift.date,
         end_date: shift.end_date,
-        specialEvent: shift.specialEvent,
+        specialEvent: shift.special_event,
         availability: shift.availability,
-        specialName: shift.special_Name,
+        specialName: shift.special_name,
       };
     },
     enabled: !!id, // Only run the query if id is available
@@ -77,13 +77,11 @@ export default function Page() {
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
     // updateShiftMutation.mutate(formData);
   };
 
   return (
     <>
-      {formData.specialName}
       {isAdmin && (
         <div>
           <form className="flex flex-col" onSubmit={submit}>
