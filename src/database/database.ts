@@ -143,7 +143,32 @@ export const getShifts = async (
 };
 
 export const getShift = async (id: string) => {
-  const [rows] = await pool.query("SELECT * FROM shift WHERE id = ?", [id]);
+  // const [rows] = await pool.query("SELECT * FROM shift WHERE id = ?", [id]);
+  const sql = `
+    SELECT date, end_date, special_event, special_name, 
+    u1.id AS worker1_id, u1.first_name AS worker1_first_name, u1.last_name AS worker1_last_name,
+    u2.id AS worker2_id, u2.first_name AS worker2_first_name, u2.last_name AS worker2_last_name 
+    FROM shift s 
+    LEFT JOIN user u1 ON u1.id = s.worker1_id 
+    LEFT JOIN user u2 ON u2.id = s.worker2_id 
+    WHERE s.id = ?;
+  `;
+  const [rows] = await pool.query(sql, [id]);
+  return rows;
+};
+
+export const updateShift = async (
+  id: string,
+  date: string,
+  endDate: string,
+  worker1_id: string,
+  worker2_id: string,
+  specialName: string
+) => {
+  const [rows] = await pool.query(
+    "UPDATE shift SET date = ?, end_date = ?, worker1_id = ?, worker2_id = ?, special_name = ? WHERE id = ?",
+    [date, endDate, worker1_id, worker2_id, specialName, id]
+  );
   return rows;
 };
 
