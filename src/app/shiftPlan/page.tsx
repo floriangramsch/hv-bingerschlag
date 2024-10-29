@@ -4,11 +4,14 @@ import React, { useEffect, useState } from "react";
 import { convertDate } from "../helpers/functions";
 import { TAssignedShifts } from "../helpers/types";
 import { useQuery } from "@tanstack/react-query";
+import useIsAdmin from "../helpers/useIsAdmin";
 
 export default function ShiftPlan() {
   const [month, setMonth] = useState(() => getMonth());
   const [year, setYear] = useState(() => getYear());
   const [special, setSpecial] = useState<boolean>(false);
+
+  const { data: isAdmin } = useIsAdmin();
 
   function getMonth() {
     const currentDate = new Date();
@@ -152,16 +155,18 @@ export default function ShiftPlan() {
                 <div>{worker2_name}</div>
                 {!worker1_name && !worker2_name && <div>Not manned!</div>}
               </div>
-              <div className="absolute bottom-0 right-0 pr-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.location.href = `/edit-shift/${id}`;
-                  }}
-                >
-                  e
-                </button>
-              </div>
+              {isAdmin && (
+                <div className="absolute bottom-0 right-0 pr-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.location.href = `/edit-shift/${id}`;
+                    }}
+                  >
+                    e
+                  </button>
+                </div>
+              )}
             </div>
           )
         )}
