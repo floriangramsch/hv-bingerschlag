@@ -19,7 +19,15 @@ export default function Page() {
     queryFn: async () => {
       const response = await fetch(`/api/shifts/${id}`);
       const shifts = await response.json();
-      return shifts[0];
+      const shift = shifts[0];
+      return {
+        id: shift.id,
+        date: shift.date,
+        end_date: shift.end_date,
+        specialEvent: shift.specialEvent,
+        availability: shift.availability,
+        specialName: shift.special_Name,
+      };
     },
     enabled: !!id, // Only run the query if id is available
   });
@@ -31,7 +39,7 @@ export default function Page() {
   useEffect(() => {
     if (shift) {
       setFormData({
-        specialName: shift.special_name,
+        specialName: shift.specialName,
       });
     }
   }, [shift]);
