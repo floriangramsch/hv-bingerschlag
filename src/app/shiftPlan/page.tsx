@@ -137,7 +137,7 @@ export default function ShiftPlan() {
             special_name,
           }) => (
             <div
-              className="my-4 border border-secondory rounded p-2 text-text shadow"
+              className="relative my-4 border border-secondory rounded p-2 text-text shadow"
               key={id}
               style={{
                 margin: "0",
@@ -151,6 +151,16 @@ export default function ShiftPlan() {
                 <div>{worker1_name}</div>
                 <div>{worker2_name}</div>
                 {!worker1_name && !worker2_name && <div>Not manned!</div>}
+              </div>
+              <div className="absolute bottom-0 right-0 pr-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.location.href = `/edit-shift/${id}`;
+                  }}
+                >
+                  e
+                </button>
               </div>
             </div>
           )

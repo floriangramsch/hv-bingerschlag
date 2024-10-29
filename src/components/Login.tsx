@@ -2,8 +2,9 @@
 
 import { TSelectUser, TUser } from "@/app/helpers/types";
 import useIsAdmin from "@/app/helpers/useIsAdmin";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MouseEvent, MouseEventHandler, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function Login({
   setName,
@@ -15,8 +16,10 @@ export default function Login({
     undefined
   );
 
+  const queryClient = useQueryClient();
+
   const {
-    data: userOptions,
+    data: users,
     isLoading,
     error,
   } = useQuery<TSelectUser[]>({
@@ -29,6 +32,7 @@ export default function Login({
         label: `${user.first_name} ${user.last_name}`,
         first_name: user.first_name,
         registered: user.registered,
+        is_active: user.is_active,
       }));
     },
   });
@@ -46,7 +50,48 @@ export default function Login({
   };
 
   const removeUser = () => {
-    console.log(userIdToRemove);
+    if (userIdToRemove) {
+      retireUserMutation.mutate(
+        { id: userIdToRemove, retire: true },
+        { onSuccess: () => toast("User retired successfully!") }
+      );
+    }
+  };
+
+  const retireUserMutation = useMutation({
+    mutationFn: async ({ id, retire }: { id: number; retire: boolean }) => {
+      const response = await fetch("/api/members/retireUser", {
+        method: "PUT",
+        body: JSON.stringify({ id, retire }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add user");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      setShowDialog(false);
+      queryClient.refetchQueries({ queryKey: ["members"] });
+    },
+    onError: (error: Error) => {
+      alert(error.message);
+    },
+  });
+
+  const setUser = (user: TSelectUser) => {
+    if (user.is_active) {
+      // login
+      setName(user);
+    } else if (isAdmin) {
+      // set active
+      retireUserMutation.mutate(
+        { id: user.value, retire: false },
+        { onSuccess: () => toast("Set user successfully active!") }
+      );
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -59,25 +104,39 @@ export default function Login({
       </div>
       <div className="mt-16 flex flex-col  bg-bg text-text border-2 border-primary p-5">
         <div className="grid grid-cols-3 gap-3">
-          {userOptions &&
-            userOptions.map((user) => {
+          {users &&
+            users.map((user) => {
               return (
                 <div
-                  className={`relative w-20 h-20 ${
-                    isAdmin &&
-                    (user.registered ? "border-green-500" : "border-red-500")
+                  className={`relative w-20 h-20 cursor-pointer ${
+                    user.is_active
+                      ? isAdmin &&
+                        (user.registered
+                          ? "border-green-500"
+                          : "border-red-500")
+                      : isAdmin
+                      ? "border-gray-500"
+                      : "hidden"
                   } border border-bg-lighter flex justify-center items-center`}
                   key={user.value}
-                  onClick={() => setName(user)}
+                  onClick={() => setUser(user)}
                 >
                   {user.first_name}
-                  <button
-                    onClick={(e) => openDialog(e, user.value)}
-                    hidden={!isAdmin}
-                    className={`absolute right-0 bottom-0 pr-2`}
-                  >
-                    x
-                  </button>
+                  {isAdmin && (
+                    <div className="absolute right-0 bottom-0 pr-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.location.href = `/edit-member/${user.value}`;
+                        }}
+                      >
+                        e
+                      </button>
+                      <button onClick={(e) => openDialog(e, user.value)}>
+                        x
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -85,7 +144,7 @@ export default function Login({
       </div>
       {showDialog && (
         <div className="absolute flex flex-col rounded shadow items-center justify-center w-48 h-20 top-1/2 left-1/2 bg-black">
-          Sure?
+          Retire?
           <div className="space-x-2">
             <button onClick={removeUser} className="bg-primary p-1 rounded">
               Yes
@@ -96,6 +155,7 @@ export default function Login({
           </div>
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 }

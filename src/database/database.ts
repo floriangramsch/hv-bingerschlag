@@ -14,6 +14,32 @@ export const getUsers = async () => {
   return rows;
 };
 
+export const getMember = async (id: number) => {
+  const [rows] = await pool.query("SELECT * FROM user WHERE id = 1", [id]);
+  return rows;
+};
+
+export const updateMember = async (
+  id: string,
+  firstName: string,
+  lastName: string,
+  email: string
+) => {
+  const [rows] = await pool.query(
+    "UPDATE user SET first_name = ?, last_name = ?, email = ? WHERE id = ?",
+    [firstName, lastName, email, id]
+  );
+  return rows;
+};
+
+export const retireUser = async (id: number, retire: boolean) => {
+  const [rows] = await pool.query(
+    "UPDATE user SET is_active = ? WHERE id = ?",
+    [retire ? 0 : 1, id]
+  );
+  return rows;
+};
+
 export const getUnassignedShifts = async (user_id: number) => {
   const result = [];
   const sql = `
@@ -113,6 +139,11 @@ export const getShifts = async (
     `,
     [year, month, special]
   );
+  return rows;
+};
+
+export const getShift = async (id: string) => {
+  const [rows] = await pool.query("SELECT * FROM shift WHERE id = ?", [id]);
   return rows;
 };
 

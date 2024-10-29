@@ -5,6 +5,7 @@ export type TUser = {
   email: string;
   registered: boolean;
   telegram_id: string;
+  is_active: boolean;
 };
 
 export type TSelectUser = {
@@ -12,6 +13,7 @@ export type TSelectUser = {
   label: string;
   first_name: string;
   registered: boolean;
+  is_active: boolean;
 };
 
 export type DShift = {

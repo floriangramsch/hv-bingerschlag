@@ -15,7 +15,8 @@
     "react": "^18",
     "react-big-calendar": "^1.13.4",
     "react-dom": "^18",
-    "react-select": "^5.8.0"
+    "react-select": "^5.8.0",
+    "react-toastify": "^10.0.6"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.57.2",
