@@ -4,6 +4,7 @@ import React from "react";
 import { convertDate } from "../helpers/functions";
 import { TShiftsToAssign } from "../helpers/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { bread, Toast } from "@/components/ui/Toast";
 
 export default function ShiftAssignment() {
   const queryClient = useQueryClient();
@@ -35,6 +36,7 @@ export default function ShiftAssignment() {
       if (data === "Already Full") {
         window.alert("Already full");
       } else {
+        bread("Successfully assigned the shifts!");
         window.location.href = "/shiftPlan";
       }
       queryClient.invalidateQueries({ queryKey: ["surveysToAssign"] });
@@ -72,6 +74,7 @@ export default function ShiftAssignment() {
 
   return (
     <>
+      <Toast />
       <div className="grid grid-cols-2">
         {shifts
           ? Object.entries(shifts).map(([surveyShiftId, data]) => {

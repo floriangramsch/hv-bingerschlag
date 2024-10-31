@@ -2,17 +2,15 @@
 
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { bread, Toast } from "../ui/Toast";
 
 const ShiftCreation = () => {
   const queryClient = useQueryClient();
   const [date, setDay] = useState(getTodayDate());
   const [endDate, setEndDay] = useState(getTodayDate());
-  const [surveyShiftNotification, setSurveyShiftNotification] =
-    useState<string>("");
   const [month, setMonth] = useState<number>(getNextMonth());
   const [specialEvent, setSpecialEvent] = useState<boolean>(false);
   const [eventName, setEventName] = useState<string>("barTest");
-  const [surveyNotification, setSurveyNotification] = useState<string>("");
 
   function getNextMonth() {
     const currentDate = new Date();
@@ -49,9 +47,8 @@ const ShiftCreation = () => {
       return response.json();
     },
     onSuccess: (msg: string) => {
+      bread(msg);
       setMonth(getNextMonth());
-      setSurveyShiftNotification(msg);
-      setTimeout(() => setSurveyShiftNotification(""), 3000);
       queryClient.invalidateQueries({ queryKey: ["shifts"] });
     },
     onError: (error: Error) => {
@@ -74,8 +71,7 @@ const ShiftCreation = () => {
       return response.json();
     },
     onSuccess: () => {
-      setSurveyNotification("Survey created successfully!");
-      setTimeout(() => setSurveyNotification(""), 3000);
+      bread("Successfully created month!");
       queryClient.invalidateQueries({ queryKey: ["shifts"] });
     },
     onError: (error: Error) => {
@@ -93,6 +89,7 @@ const ShiftCreation = () => {
 
   return (
     <div className="my-4 border border-secondory rounded p-2 text-text shadow">
+      <Toast />
       <span>Special Event</span>
       <input type="checkbox" onChange={() => setSpecialEvent(!specialEvent)} />
       <input
@@ -124,11 +121,6 @@ const ShiftCreation = () => {
       >
         {createShiftMutation.isPending ? "Creating..." : "Create Shift"}
       </button>
-      {surveyShiftNotification && (
-        <div className="text-text text-xl mb-1 mr-3">
-          {surveyShiftNotification}
-        </div>
-      )}
       <div className="mx-3 flex flex-col">
         <input
           className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3"
@@ -143,11 +135,6 @@ const ShiftCreation = () => {
         >
           {createMonthMutation.isPending ? "Creating..." : "Create Shift Month"}
         </button>
-        {surveyNotification && (
-          <div className="text-text text-xl mb-1 mr-3">
-            {surveyNotification}
-          </div>
-        )}
       </div>
     </div>
   );

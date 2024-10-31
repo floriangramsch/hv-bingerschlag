@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { bread, Toast } from "../ui/Toast";
 
 export default function UserCreation() {
   const queryClient = useQueryClient();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [notification, setNotification] = useState("");
 
   const addUserMutation = useMutation({
     mutationFn: async () => {
@@ -25,11 +25,10 @@ export default function UserCreation() {
       return response.json();
     },
     onSuccess: () => {
+      bread("Successfully created user!");
       setFirstName("");
       setLastName("");
       setEmail("");
-      setNotification("User added successfully!");
-      setTimeout(() => setNotification(""), 3000);
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (error: Error) => {
@@ -43,6 +42,7 @@ export default function UserCreation() {
 
   return (
     <>
+      <Toast />
       <div className="my-4 border border-secondory rounded p-2 text-text shadow">
         <input
           className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3"
@@ -73,7 +73,6 @@ export default function UserCreation() {
         >
           {addUserMutation.isPending ? "Adding..." : "Add User"}
         </button>
-        {notification && <div className="label">{notification}</div>}
       </div>
     </>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { bread, Toast } from "@/components/ui/Toast";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -41,6 +42,7 @@ const BarUsage = () => {
       return response.json();
     },
     onSuccess: () => {
+      bread("You may use the bar now!");
       window.location.href = "/barCalendar";
     },
     onError: (error: Error) => {
@@ -50,6 +52,7 @@ const BarUsage = () => {
 
   return (
     <>
+      <Toast />
       <div className="mt-28 flex flex-col justify-center border-2 border-primary p-5 rounded shadow">
         <span>Title</span>
         <input

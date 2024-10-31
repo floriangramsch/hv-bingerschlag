@@ -4,10 +4,10 @@ import { TUser } from "@/app/helpers/types";
 import useIsAdmin from "@/app/helpers/useIsAdmin";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { bread, Toast } from "@/components/ui/Toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
 
 export default function Page() {
   const { id } = useParams();
@@ -68,7 +68,7 @@ export default function Page() {
     },
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ["members"] });
-      toast("User successfully updated!");
+      bread("User successfully updated!");
     },
     onError: (error) => {
       console.error("Error updating member:", error);
@@ -107,7 +107,7 @@ export default function Page() {
               Update
             </Button>
           </form>
-          <ToastContainer />
+          <Toast />
         </div>
       )}
     </>

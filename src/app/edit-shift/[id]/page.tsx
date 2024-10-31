@@ -4,21 +4,17 @@ import { TSelectUser, TShift, TUser } from "@/app/helpers/types";
 import useIsAdmin from "@/app/helpers/useIsAdmin";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { Toast, bread } from "@/components/ui/Toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
 
 export default function Page() {
   const { id } = useParams();
   const { data: isAdmin } = useIsAdmin();
   const queryClient = useQueryClient();
 
-  const {
-    data: users,
-    isLoading,
-    error,
-  } = useQuery<TSelectUser[]>({
+  const { data: users } = useQuery<TSelectUser[]>({
     queryKey: ["members"],
     queryFn: async () => {
       const response = await fetch("/api/members/getMembers");
@@ -97,7 +93,7 @@ export default function Page() {
     },
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ["shifts"] });
-      toast("Shift successfully updated!");
+      bread("Shift successfully updated!");
     },
     onError: (error) => {
       console.error("Error updating shift:", error);
@@ -106,7 +102,6 @@ export default function Page() {
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
     updateShiftMutation.mutate(formData);
   };
 
@@ -165,7 +160,7 @@ export default function Page() {
               Update
             </Button>
           </form>
-          <ToastContainer />
+          <Toast />
         </div>
       )}
     </>

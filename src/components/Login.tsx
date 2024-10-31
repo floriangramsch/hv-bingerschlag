@@ -3,8 +3,8 @@
 import { TSelectUser, TUser } from "@/app/helpers/types";
 import useIsAdmin from "@/app/helpers/useIsAdmin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MouseEvent, MouseEventHandler, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { MouseEvent, useState } from "react";
+import { bread, Toast } from "./ui/Toast";
 
 export default function Login({
   setName,
@@ -53,7 +53,7 @@ export default function Login({
     if (userIdToRemove) {
       retireUserMutation.mutate(
         { id: userIdToRemove, retire: true },
-        { onSuccess: () => toast("User retired successfully!") }
+        { onSuccess: () => bread("User retired successfully!") }
       );
     }
   };
@@ -89,7 +89,7 @@ export default function Login({
       // set active
       retireUserMutation.mutate(
         { id: user.value, retire: false },
-        { onSuccess: () => toast("Set user successfully active!") }
+        { onSuccess: () => bread("Set user successfully active!") }
       );
     }
   };
@@ -155,7 +155,7 @@ export default function Login({
           </div>
         </div>
       )}
-      <ToastContainer />
+      <Toast />
     </div>
   );
 }
