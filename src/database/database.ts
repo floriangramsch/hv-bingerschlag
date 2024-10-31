@@ -143,7 +143,6 @@ export const getShifts = async (
 };
 
 export const getShift = async (id: string) => {
-  // const [rows] = await pool.query("SELECT * FROM shift WHERE id = ?", [id]);
   const sql = `
     SELECT date, end_date, special_event, special_name, 
     u1.id AS worker1_id, u1.first_name AS worker1_first_name, u1.last_name AS worker1_last_name,

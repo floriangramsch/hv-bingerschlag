@@ -21,9 +21,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/pi/Deployed/hv-bingerschlag
+            echo "Pulling....."
             git pull
-            echo "Install and building....."
+            echo "Installing....."
             npm install
+            echo "Building....."
             npm run build
             echo "Restarting systemctl..."
             sudo systemctl restart hvbingerschlag.service

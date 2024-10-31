@@ -32,7 +32,7 @@ export default function Page() {
   const { data: shift } = useQuery({
     queryKey: ["shift", id],
     queryFn: async () => {
-      const response = await fetch(`/api/shifts/${id}`);
+      const response = await fetch(`/api/shifts?id=${id}`);
       const shifts = await response.json();
       const shift = shifts[0];
       return shift;
