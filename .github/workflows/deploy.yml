@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  update_cats:
+  update_hv_plan:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +20,7 @@ jobs:
           username: ${{ secrets.PI_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e  # Stop execution on any error
             cd /home/pi/Deployed/hv-bingerschlag
             echo "Pulling....."
             git pull
