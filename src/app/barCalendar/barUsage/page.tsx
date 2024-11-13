@@ -13,20 +13,6 @@ const BarUsage = () => {
   );
   const [title, setTitle] = useState<string>("");
 
-  const takeBar = () => {
-    fetch("/api/events/useBar", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ date, endDate, title }),
-    })
-      .then((response) => response.json())
-      .then(() => {
-        window.location.href = "/barCalendar";
-      });
-  };
-
   const takeBarMutation = useMutation({
     mutationFn: async () => {
       const response = await fetch("/api/events/useBar", {

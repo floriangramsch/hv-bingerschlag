@@ -171,6 +171,11 @@ export const updateShift = async (
   return rows;
 };
 
+export const removeShift = async (id: string) => {
+  const [rows] = await pool.query("DELETE FROM Shift WHERE id = ?", [id]);
+  return rows;
+};
+
 export const getSurveys = async () => {
   const [rows] = await pool.query<RowDataPacket[]>(
     `SELECT first_name, last_name, date, end_date, special_event, special_name, availability, user.id, survey.id AS surveyId

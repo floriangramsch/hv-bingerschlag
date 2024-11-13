@@ -1,44 +1,21 @@
 "use client";
 
-import { TSelectUser, TShift, TUser } from "@/app/helpers/types";
 import useIsAdmin from "@/app/helpers/useIsAdmin";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { Toast, bread } from "@/components/ui/Toast";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Toast } from "@/components/ui/Toast";
+import { useGetShift, useUpdateShift } from "@/composables/useShifts";
+import { useGetUsers } from "@/composables/useUsers";
 import { useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
 export default function Page() {
   const { id } = useParams();
   const { data: isAdmin } = useIsAdmin();
-  const queryClient = useQueryClient();
 
-  const { data: users } = useQuery<TSelectUser[]>({
-    queryKey: ["members"],
-    queryFn: async () => {
-      const response = await fetch("/api/members/getMembers");
-      const users: TUser[] = await response.json();
-      return users.map((user) => ({
-        value: user.id,
-        label: `${user.first_name} ${user.last_name}`,
-        first_name: user.first_name,
-        registered: user.registered,
-        is_active: user.is_active,
-      }));
-    },
-  });
+  const { data: users } = useGetUsers();
 
-  const { data: shift } = useQuery({
-    queryKey: ["shift", id],
-    queryFn: async () => {
-      const response = await fetch(`/api/shifts?id=${id}`);
-      const shifts = await response.json();
-      const shift = shifts[0];
-      return shift;
-    },
-    enabled: !!id, // Only run the query if id is available
-  });
+  const { data: shift } = useGetShift(id);
 
   const [formData, setFormData] = useState({
     date: "",
@@ -74,35 +51,13 @@ export default function Page() {
     }));
   };
 
-  const updateShiftMutation = useMutation({
-    mutationFn: async (updatedData: typeof formData) => {
-      const response = await fetch(`/api/shifts/updateShift`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...updatedData,
-          id: id,
-        }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to update shift");
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ["shifts"] });
-      bread("Shift successfully updated!");
-    },
-    onError: (error) => {
-      console.error("Error updating shift:", error);
-    },
-  });
+  const updateShiftMutation = useUpdateShift();
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateShiftMutation.mutate(formData);
+    if (id) {
+      updateShiftMutation.mutate({ ...formData, id: id });
+    }
   };
 
   return (

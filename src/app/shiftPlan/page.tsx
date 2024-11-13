@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { convertDate } from "../helpers/functions";
 import { TAssignedShifts } from "../helpers/types";
 import { useQuery } from "@tanstack/react-query";
