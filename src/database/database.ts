@@ -44,7 +44,7 @@ export const getUnassignedShifts = async (user_id: number) => {
   const result = [];
   const sql = `
     SELECT * FROM shift
-    WHERE worker1_id IS NULL OR worker2_id IS NULL
+    WHERE (worker1_id IS NULL OR worker2_id IS NULL) AND date >= CURDATE()
   `;
 
   const [shifts] = await pool.query<RowDataPacket[]>(sql);
@@ -181,7 +181,9 @@ export const getSurveys = async () => {
     `SELECT first_name, last_name, date, end_date, special_event, special_name, availability, user.id, survey.id AS surveyId
     FROM user 
     LEFT JOIN survey ON survey.user_id = user.id 
-    LEFT JOIN shift ON survey.shift_id = shift.id`
+    LEFT JOIN shift ON survey.shift_id = shift.id
+    WHERE shift.date >= CURDATE()
+    `
   );
   const surveysByUser: { [key: string]: any[] } = {};
   for (const row of rows) {
@@ -347,8 +349,7 @@ export const getSurveysToAssign = async () => {
     `
       SELECT *
       FROM shift s
-      WHERE s.worker1_id IS NULL
-        OR s.worker2_id IS NULL;
+      WHERE (s.worker1_id IS NULL OR s.worker2_id IS NULL) AND date >= CURDATE();
     `
   );
   for (const shift of shifts) {

@@ -74,9 +74,9 @@ export default function ShiftAssignment() {
   if (error) return <div>Error loading surveys</div>;
 
   return (
-    <>
+    <div className="p-2">
       <Toast />
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 gap-1">
         {shifts
           ? Object.entries(shifts).map(([surveyShiftId, data]) => {
               return (
@@ -130,6 +130,6 @@ export default function ShiftAssignment() {
       >
         Assing Shifts
       </button>
-    </>
+    </div>
   );
 }
