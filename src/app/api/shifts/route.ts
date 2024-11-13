@@ -28,9 +28,9 @@ export async function DELETE(request: any) {
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
-    console.error("Error creating entry:", error);
+    console.error("Error deleting shift:", error);
     return NextResponse.json(
-      { message: "Error creating entry." },
+      { message: "Error deleting shift." },
       { status: 500 }
     );
   }

@@ -3,8 +3,13 @@
 import useIsAdmin from "@/app/helpers/useIsAdmin";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import Select from "@/components/ui/Select";
 import { Toast } from "@/components/ui/Toast";
-import { useGetShift, useUpdateShift } from "@/composables/useShifts";
+import {
+  useGetShift,
+  useRemoveShift,
+  useUpdateShift,
+} from "@/composables/useShifts";
 import { useGetUsers } from "@/composables/useUsers";
 import { useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
@@ -35,8 +40,8 @@ export default function Page() {
           shift.end_date.split("T")[0] +
           " " +
           shift.end_date.split("T")[1].slice(0, 8), // Format für MySQL
-        worker1_id: shift.worker1_id,
-        worker2_id: shift.worker2_id,
+        worker1_id: shift.worker1_id !== "" ? shift.worker1_id : null,
+        worker2_id: shift.worker2_id !== "" ? shift.worker2_id : null,
       });
     }
   }, [shift]);
@@ -52,6 +57,7 @@ export default function Page() {
   };
 
   const updateShiftMutation = useUpdateShift();
+  const removeShiftMutation = useRemoveShift();
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,22 +66,28 @@ export default function Page() {
     }
   };
 
+  const removeShift = () => {
+    if (id) {
+      removeShiftMutation.mutate(id);
+    }
+  };
+
   return (
     <>
       {isAdmin && (
-        <div>
-          <form className="flex flex-col" onSubmit={submit}>
+        <>
+          <form className="flex flex-col gap-2" onSubmit={submit}>
             <Input
               label="Date"
               name="date"
-              type="datetime-local" // Optional, falls du eine Datums-Picker-Funktionalität willst
+              type="datetime-local"
               value={formData.date}
               onChange={handleChange}
             />
             <Input
               label="End Date"
               name="endDate"
-              type="datetime-local" // Optional
+              type="datetime-local"
               value={formData.endDate}
               onChange={handleChange}
             />
@@ -85,38 +97,42 @@ export default function Page() {
               value={formData.specialName}
               onChange={handleChange}
             />
-            <select
+            <Select
+              value={formData.worker1_id ?? undefined}
               name="worker1_id"
-              value={formData.worker1_id}
-              onChange={handleChange}
-              className="text-black"
+              options={
+                users?.map((user) => ({
+                  value: user.value,
+                  label: user.label,
+                })) ?? []
+              }
+              change={handleChange}
             >
-              <option value="">Select Worker 1</option>
-              {users?.map((user) => (
-                <option key={user.value} value={user.value}>
-                  {user.label}
-                </option>
-              ))}
-            </select>
-            <select
+              Select Worker 1
+            </Select>
+            <Select
+              value={formData.worker2_id ?? undefined}
               name="worker2_id"
-              value={formData.worker2_id}
-              onChange={handleChange}
-              className="text-black"
+              options={
+                users?.map((user) => ({
+                  value: user.value,
+                  label: user.label,
+                })) ?? []
+              }
+              change={handleChange}
             >
-              <option value="">Select Worker 2</option>
-              {users?.map((user) => (
-                <option key={user.value} value={user.value}>
-                  {user.label}
-                </option>
-              ))}
-            </select>
+              Select Worker 2
+            </Select>
             <Button className="m-1" type="submit">
               Update
             </Button>
+
+            <Button className="bg-red-600" func={removeShift}>
+              Remove
+            </Button>
           </form>
           <Toast />
-        </div>
+        </>
       )}
     </>
   );

@@ -90,21 +90,21 @@ export default function ShiftPlan() {
       <div className="flex space-x-5">
         <i
           aria-hidden
-          className="fa-solid fa-left-long text-5xl"
+          className="fa-solid fa-left-long text-5xl cursor-pointer"
           style={{ color: "#e74c3c" }}
           onClick={() => changeMonth(false)}
         />
         {special ? (
           <i
             aria-hidden
-            className="fa-solid fa-star text-5xl"
+            className="fa-solid fa-star text-5xl cursor-pointer"
             style={{ color: "#e74c3c" }}
             onClick={() => setSpecial(false)}
           />
         ) : (
           <i
             aria-hidden
-            className="fa-regular fa-star text-5xl"
+            className="fa-regular fa-star text-5xl cursor-pointer"
             style={{ color: "#e74c3c" }}
             onClick={() => setSpecial(true)}
             // onClick={() => setView("special")}
@@ -112,21 +112,10 @@ export default function ShiftPlan() {
         )}
         <i
           aria-hidden
-          className="fa-solid fa-right-long text-5xl"
+          className="fa-solid fa-right-long text-5xl cursor-pointer"
           style={{ color: "#e74c3c" }}
           onClick={() => changeMonth(true)}
         />
-
-        {/* <input
-          className="w-10 h-10"
-          type="checkbox"
-          onChange={() => setCurrent(!current)}
-        />
-        <input
-          className="w-10 h-10"
-          type="checkbox"
-          onChange={() => setSpecial(!special)}
-        /> */}
       </div>
       <div className="grid grid-cols-2 mt-6 gap-2">
         {shifts?.map(
@@ -156,15 +145,16 @@ export default function ShiftPlan() {
                 {!worker1_name && !worker2_name && <div>Not manned!</div>}
               </div>
               {isAdmin && (
-                <div className="absolute bottom-0 right-0 pr-2">
-                  <button
+                <div className="absolute bottom-1 right-1">
+                  <i
+                    aria-hidden
+                    className="fa-solid fa-edit text-2xl cursor-pointer"
+                    style={{ color: "#e74c3c" }}
                     onClick={(e) => {
                       e.stopPropagation();
                       window.location.href = `/edit-shift/${id}`;
                     }}
-                  >
-                    e
-                  </button>
+                  />
                 </div>
               )}
             </div>

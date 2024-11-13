@@ -39,7 +39,7 @@ export default function Login({
 
   const { data: isAdmin } = useIsAdmin();
 
-  const openDialog = (e: MouseEvent<HTMLButtonElement>, userId: number) => {
+  const openDialog = (e: MouseEvent<HTMLElement>, userId: number) => {
     e.stopPropagation();
     setShowDialog(true);
     setUserIdToRemove(userId);
@@ -123,19 +123,27 @@ export default function Login({
                 >
                   {user.first_name}
                   {isAdmin && (
-                    <div className="absolute right-0 bottom-0 pr-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          window.location.href = `/edit-member/${user.value}`;
-                        }}
-                      >
-                        e
-                      </button>
-                      <button onClick={(e) => openDialog(e, user.value)}>
-                        x
-                      </button>
-                    </div>
+                    <>
+                      <div className="absolute right-1 top-0">
+                        <i
+                          aria-hidden
+                          className="fa-solid fa-close text-2xl cursor-pointer"
+                          style={{ color: "#e74c3c" }}
+                          onClick={(e) => openDialog(e, user.value)}
+                        />
+                      </div>
+                      <div className="absolute left-1 bottom-0">
+                        <i
+                          aria-hidden
+                          className="fa-solid fa-edit text-lg cursor-pointer"
+                          style={{ color: "#e74c3c" }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.location.href = `/edit-member/${user.value}`;
+                          }}
+                        />
+                      </div>
+                    </>
                   )}
                 </div>
               );

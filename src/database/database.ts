@@ -172,7 +172,7 @@ export const updateShift = async (
 };
 
 export const removeShift = async (id: string) => {
-  const [rows] = await pool.query("DELETE FROM Shift WHERE id = ?", [id]);
+  const [rows] = await pool.query("DELETE FROM shift WHERE id = ?", [id]);
   return rows;
 };
 

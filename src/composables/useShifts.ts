@@ -18,7 +18,7 @@ export function useRemoveShift() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id: string | string[]) => {
       const response = await fetch(`/api/shifts`, {
         method: "DELETE",
         headers: {

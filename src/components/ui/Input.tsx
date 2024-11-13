@@ -16,7 +16,7 @@ export default function Input({
   type?: string;
 }) {
   return (
-    <div className="flex gap-2 py-1 items-center">
+    <div className="flex gap-2 items-center">
       {label && <label className="text-lg min-w-36">{label}</label>}
       <input
         type={type}
