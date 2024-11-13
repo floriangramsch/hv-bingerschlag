@@ -92,48 +92,49 @@ const ShiftCreation = () => {
   return (
     <div className="flex flex-col my-4 border border-secondory rounded p-2 text-text text-xl gap-2 shadow">
       <Toast />
-      <div className="space-x-2">
-        <span>Special Event</span>
-        <input
-          className="size-6"
-          type="checkbox"
-          onChange={() => setSpecialEvent(!specialEvent)}
-        />
-        <Input
-          value={eventName}
-          onChange={(event) => setEventName(event.target.value)}
-          hidden={!specialEvent}
-        />
+      <div>
+        <div className="space-x-2">
+          <span>Special Event</span>
+          <input
+            className="size-6"
+            type="checkbox"
+            onChange={() => setSpecialEvent(!specialEvent)}
+          />
+          <Input
+            value={eventName}
+            onChange={(event) => setEventName(event.target.value)}
+            hidden={!specialEvent}
+          />
+        </div>
+        <div className="space-x-2">
+          <span>Start Time</span>
+          <input
+            type="datetime-local"
+            className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3 focus:outline-none focus:ring-2 focus:ring-primary"
+            value={date}
+            onChange={(event) => setDay(event.target.value)}
+          />
+        </div>
+        <div className="space-x-2">
+          <span>End Time</span>
+          <input
+            type="datetime-local"
+            className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3 focus:outline-none focus:ring-2 focus:ring-primary"
+            value={endDate}
+            onChange={(event) => setEndDay(event.target.value)}
+          />
+        </div>
+        <Button
+          className="px-5 py-3"
+          func={createShift}
+          disabled={createShiftMutation.isPending}
+        >
+          {createShiftMutation.isPending ? "Creating..." : "Create Shift"}
+        </Button>
       </div>
-      <div className="space-x-2">
-        <span>Start Time</span>
+      <div className="mx-3 mt-10 flex">
         <input
-          type="datetime-local"
-          className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3 focus:outline-none focus:ring-2 focus:ring-primary"
-          value={date}
-          onChange={(event) => setDay(event.target.value)}
-        />
-      </div>
-      <div className="space-x-2">
-        <span>End Time</span>
-        <input
-          type="datetime-local"
-          className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3 focus:outline-none focus:ring-2 focus:ring-primary"
-          value={endDate}
-          onChange={(event) => setEndDay(event.target.value)}
-        />
-      </div>
-
-      <Button
-        className="px-5 py-3"
-        func={createShift}
-        disabled={createShiftMutation.isPending}
-      >
-        {createShiftMutation.isPending ? "Creating..." : "Create Shift"}
-      </Button>
-      <div className="mx-3 flex flex-col">
-        <input
-          className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3 focus:outline-none focus:ring-2 focus:ring-primary"
+          className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3 focus:outline-none focus:ring-2 focus:ring-primary remove-arrow w-20"
           placeholder={String(month)}
           id="month"
           type="number"
