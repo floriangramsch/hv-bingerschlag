@@ -48,7 +48,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <div className="flex flex-col justify-center">
-          <div className="items-center mb-20">
+          <div className="items-center mb-28">
             <QueryProvider>{children}</QueryProvider>
           </div>
           <Footer />

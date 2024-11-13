@@ -75,6 +75,9 @@ export default function Admin() {
       {isAdmin ? (
         <>
           <div className="flex flex-col justify-center items-center gap-1 text-2xl">
+            <div className="flex text-center justify-center p-4 mb-5 mt-1 w-1/2 border-none text-xl font-bold bg-primary rounded">
+              Welcome to the Admin Area
+            </div>
             <div className="m-4 space-x-2 [&>a]:bg-secondory [&>a]:rounded [&>a]:p-2">
               <a href="/surveyOverview">Overview</a>
               <a href="/shiftAssignment">Shift Assignment</a>
@@ -91,7 +94,7 @@ export default function Admin() {
       ) : (
         <div className="flex flex-col items-center mt-10">
           <div className="flex text-center justify-center p-4 mb-5 mt-1 w-1/2 border-none text-xl font-bold bg-primary rounded">
-            Welcome to the Admin Area
+            Admin Area
           </div>
           <div className="mt-28 flex flex-col items-center bg-bg text-text border-2 border-primary rounded p-5">
             <input
