@@ -90,7 +90,7 @@ export default function ShiftAssignment() {
                 >
                   <h3>{convertDate(new Date(data.date))}</h3>
                   <h4>{data.specialEvent ? data.specialName : <br />}</h4>
-                  {data.surveys
+                  {data.surveys && Object.keys(data.surveys).length > 0
                     ? Object.entries(data.surveys).map(([surveyId, user]) => {
                         return (
                           <div
@@ -118,7 +118,7 @@ export default function ShiftAssignment() {
                           </div>
                         );
                       })
-                    : "blub"}
+                    : "No Surveys yet"}
                 </div>
               );
             })
