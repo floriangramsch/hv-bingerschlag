@@ -1,11 +1,11 @@
-interface SelectProps {
+type SelectProps = {
   name: string;
   options: { value: number; label: string }[];
   change: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   class?: string;
   value?: string;
   children?: React.ReactNode;
-}
+};
 
 export default function Select(data: SelectProps) {
   return (

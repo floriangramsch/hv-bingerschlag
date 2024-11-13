@@ -5,6 +5,7 @@ import { convertDate } from "../helpers/functions";
 import { TAssignedShifts } from "../helpers/types";
 import { useQuery } from "@tanstack/react-query";
 import useIsAdmin from "../helpers/useIsAdmin";
+import { Toast } from "@/components/ui/Toast";
 
 export default function ShiftPlan() {
   const [month, setMonth] = useState(() => getMonth());
@@ -85,9 +86,11 @@ export default function ShiftPlan() {
     <>
       <div className="text-3xl mb-3 flex flex-col">
         <div className="flex justify-center text-4xl">{convertMonthName()}</div>
-        <div>{special && "Special Events"}</div>
+        {special && (
+          <div className="flex justify-center">{"Special Events"}</div>
+        )}
       </div>
-      <div className="flex space-x-5">
+      <div className="flex justify-center space-x-5">
         <i
           aria-hidden
           className="fa-solid fa-left-long text-5xl cursor-pointer"
@@ -117,50 +120,52 @@ export default function ShiftPlan() {
           onClick={() => changeMonth(true)}
         />
       </div>
-      <div className="grid grid-cols-2 mt-6 gap-2">
-        {shifts?.map(
-          ({
-            id,
-            date,
-            end_date,
-            worker1_name,
-            worker2_name,
-            special_event,
-            special_name,
-          }) => (
-            <div
-              className="relative my-4 border border-secondory rounded p-2 text-text shadow"
-              key={id}
-              style={{
-                margin: "0",
-              }}
-            >
-              <div className="font-bold text-xl">
-                {convertDate(new Date(date))}
-              </div>
-              <div>{special_name}</div>
-              <div className="text-text text-lg mb-1 mr-4">
-                <div>{worker1_name}</div>
-                <div>{worker2_name}</div>
-                {!worker1_name && !worker2_name && <div>Not manned!</div>}
-              </div>
-              {isAdmin && (
-                <div className="absolute bottom-1 right-1">
-                  <i
-                    aria-hidden
-                    className="fa-solid fa-edit text-2xl cursor-pointer"
-                    style={{ color: "#e74c3c" }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.location.href = `/edit-shift/${id}`;
-                    }}
-                  />
+      <div className="grid grid-cols-2 justify-center mt-6 gap-2">
+        {shifts &&
+          shifts?.map(
+            ({
+              id,
+              date,
+              end_date,
+              worker1_name,
+              worker2_name,
+              special_event,
+              special_name,
+            }) => (
+              <div
+                className="relative my-4 border border-secondory rounded p-2 text-text shadow"
+                key={id}
+                style={{
+                  margin: "0",
+                }}
+              >
+                <div className="font-bold text-xl">
+                  {convertDate(new Date(date))}
                 </div>
-              )}
-            </div>
-          )
-        )}
+                <div>{special_name}</div>
+                <div className="text-text text-lg mb-1 mr-4">
+                  <div>{worker1_name}</div>
+                  <div>{worker2_name}</div>
+                  {!worker1_name && !worker2_name && <div>Not manned!</div>}
+                </div>
+                {isAdmin && (
+                  <div className="absolute bottom-1 right-1">
+                    <i
+                      aria-hidden
+                      className="fa-solid fa-edit text-2xl cursor-pointer"
+                      style={{ color: "#e74c3c" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/edit-shift/${id}`;
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            )
+          )}
       </div>
+      <Toast />
     </>
   );
 }

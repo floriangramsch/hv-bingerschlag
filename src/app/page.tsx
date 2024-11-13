@@ -13,7 +13,7 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className="size-screen">
       {user ? <ShiftSelection user={user} /> : <Login setName={setName} />}
     </div>
   );

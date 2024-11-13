@@ -5,6 +5,7 @@ import useIsAdmin from "@/app/helpers/useIsAdmin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MouseEvent, useState } from "react";
 import { bread, Toast } from "./ui/Toast";
+import Confirm from "./ui/Confirm";
 
 export default function Login({
   setName,
@@ -98,71 +99,65 @@ export default function Login({
   if (error) return <div>Error loading users</div>;
 
   return (
-    <div className="flex flex-col">
-      <div className="flex text-center justify-center p-4 mt-1 mb-4 rounded text-xl font-bold bg-primary">
-        Click your name to proceed
-      </div>
-      <div className="mt-16 flex flex-col  bg-bg text-text border-2 border-primary p-5">
-        <div className="grid grid-cols-3 gap-3">
-          {users &&
-            users.map((user) => {
-              return (
-                <div
-                  className={`relative w-20 h-20 cursor-pointer ${
-                    user.is_active
-                      ? isAdmin &&
-                        (user.registered
-                          ? "border-green-500"
-                          : "border-red-500")
-                      : isAdmin
-                      ? "border-gray-500"
-                      : "hidden"
-                  } border border-bg-lighter flex justify-center items-center`}
-                  key={user.value}
-                  onClick={() => setUser(user)}
-                >
-                  {user.first_name}
-                  {isAdmin && (
-                    <>
-                      <div className="absolute right-1 top-0">
-                        <i
-                          aria-hidden
-                          className="fa-solid fa-close text-2xl cursor-pointer"
-                          style={{ color: "#e74c3c" }}
-                          onClick={(e) => openDialog(e, user.value)}
-                        />
-                      </div>
-                      <div className="absolute left-1 bottom-0">
-                        <i
-                          aria-hidden
-                          className="fa-solid fa-edit text-lg cursor-pointer"
-                          style={{ color: "#e74c3c" }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.location.href = `/edit-member/${user.value}`;
-                          }}
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-              );
-            })}
+    <div className="flex flex-col size-full gap-10">
+      <div className="w-full flex justify-center mt-4">
+        <div className="text-center p-4 rounded text-xl font-bold bg-primary">
+          Click your name to proceed
         </div>
       </div>
-      {showDialog && (
-        <div className="absolute flex flex-col rounded shadow items-center justify-center w-48 h-20 top-1/2 left-1/2 bg-black">
-          Retire?
-          <div className="space-x-2">
-            <button onClick={removeUser} className="bg-primary p-1 rounded">
-              Yes
-            </button>
-            <button onClick={close} className="bg-primary p-1 rounded">
-              No
-            </button>
+      <div className="flex justify-center">
+        <div className="flex flex-col w-5/6 bg-bg text-text border-2 border-primary p-5">
+          <div className="grid grid-cols-3 gap-3 place-items-center">
+            {users &&
+              users.map((user) => {
+                return (
+                  <div
+                    className={`relative w-20 h-20 cursor-pointer ${
+                      user.is_active
+                        ? isAdmin &&
+                          (user.registered
+                            ? "border-green-500"
+                            : "border-red-500")
+                        : isAdmin
+                        ? "border-gray-500"
+                        : "hidden"
+                    } border border-bg-lighter flex justify-center items-center`}
+                    key={user.value}
+                    onClick={() => setUser(user)}
+                  >
+                    {user.first_name}
+                    {isAdmin && (
+                      <>
+                        <div className="absolute right-1 top-0">
+                          <i
+                            aria-hidden
+                            className="fa-solid fa-close text-2xl cursor-pointer"
+                            style={{ color: "#e74c3c" }}
+                            onClick={(e) => openDialog(e, user.value)}
+                          />
+                        </div>
+                        <div className="absolute left-1 bottom-0">
+                          <i
+                            aria-hidden
+                            className="fa-solid fa-edit text-lg cursor-pointer"
+                            style={{ color: "#e74c3c" }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.location.href = `/edit-member/${user.value}`;
+                            }}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
           </div>
         </div>
-      )}
+      </div>
+      <Confirm isOpen={showDialog} yes={removeUser} no={close}>
+        Retire?
+      </Confirm>
       <Toast />
     </div>
   );

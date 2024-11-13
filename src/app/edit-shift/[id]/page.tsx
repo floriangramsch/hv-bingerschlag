@@ -2,9 +2,10 @@
 
 import useIsAdmin from "@/app/helpers/useIsAdmin";
 import Button from "@/components/ui/Button";
+import Confirm from "@/components/ui/Confirm";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
-import { Toast } from "@/components/ui/Toast";
+import { bread, Toast } from "@/components/ui/Toast";
 import {
   useGetShift,
   useRemoveShift,
@@ -17,9 +18,7 @@ import { FormEvent, useEffect, useState } from "react";
 export default function Page() {
   const { id } = useParams();
   const { data: isAdmin } = useIsAdmin();
-
   const { data: users } = useGetUsers();
-
   const { data: shift } = useGetShift(id);
 
   const [formData, setFormData] = useState({
@@ -29,6 +28,8 @@ export default function Page() {
     worker2_id: "",
     specialName: "",
   });
+  const [showConfirmDeleteShift, setShowConfirmDeleteShift] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (shift) {
@@ -68,7 +69,9 @@ export default function Page() {
 
   const removeShift = () => {
     if (id) {
-      removeShiftMutation.mutate(id);
+      removeShiftMutation.mutate(id, {
+        onSuccess: () => (window.location.href = `/shiftPlan`),
+      });
     }
   };
 
@@ -127,9 +130,19 @@ export default function Page() {
               Update
             </Button>
 
-            <Button className="bg-red-600" func={removeShift}>
+            <Button
+              className="bg-red-600"
+              func={() => setShowConfirmDeleteShift(true)}
+            >
               Remove
             </Button>
+            <Confirm
+              isOpen={showConfirmDeleteShift}
+              yes={removeShift}
+              no={() => setShowConfirmDeleteShift(false)}
+            >
+              Delete Shift?
+            </Confirm>
           </form>
           <Toast />
         </>
