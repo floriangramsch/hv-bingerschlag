@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useState } from "react";
 import Select from "react-select";
+import Loading from "./Loading";
 
 export default function ShiftSelection({ user }: { user: TSelectUser }) {
   const [selectedOptions, setSelectedOptions] = useState<
@@ -105,7 +106,7 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
   if (error) return <div>Error loading shifts</div>;
 
   return (

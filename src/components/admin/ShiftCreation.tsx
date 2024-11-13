@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bread, Toast } from "../ui/Toast";
+import Input from "../ui/Input";
+import Button from "../ui/Button";
 
 const ShiftCreation = () => {
   const queryClient = useQueryClient();
@@ -88,53 +90,67 @@ const ShiftCreation = () => {
   };
 
   return (
-    <div className="my-4 border border-secondory rounded p-2 text-text shadow">
+    <div className="flex flex-col my-4 border border-secondory rounded p-2 text-text text-xl gap-2 shadow">
       <Toast />
-      <span>Special Event</span>
-      <input type="checkbox" onChange={() => setSpecialEvent(!specialEvent)} />
-      <input
-        className="text-black"
-        hidden={!specialEvent}
-        value={eventName}
-        onChange={(event) => setEventName(event.target.value)}
-      />
-      <br />
-      <span>Start Time</span>
-      <input
-        type="datetime-local"
-        className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3"
-        value={date}
-        onChange={(event) => setDay(event.target.value)}
-      />
-      <br />
-      <span>End Time</span>
-      <input
-        type="datetime-local"
-        className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3"
-        value={endDate}
-        onChange={(event) => setEndDay(event.target.value)}
-      />
-      <button
-        className="inline-block px-5 py-3 bg-button m-4 text-base font-bold text-text border-none rounded cursor-pointer"
-        onClick={createShift}
+      <div className="space-x-2">
+        <span>Special Event</span>
+        <input
+          className="size-6"
+          type="checkbox"
+          onChange={() => setSpecialEvent(!specialEvent)}
+        />
+        <Input
+          value={eventName}
+          onChange={(event) => setEventName(event.target.value)}
+          hidden={!specialEvent}
+        />
+      </div>
+      <div className="space-x-2">
+        <span>Start Time</span>
+        <input
+          type="datetime-local"
+          className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3 focus:outline-none focus:ring-2 focus:ring-primary"
+          value={date}
+          onChange={(event) => setDay(event.target.value)}
+        />
+      </div>
+      <div className="space-x-2">
+        <span>End Time</span>
+        <input
+          type="datetime-local"
+          className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3 focus:outline-none focus:ring-2 focus:ring-primary"
+          value={endDate}
+          onChange={(event) => setEndDay(event.target.value)}
+        />
+      </div>
+
+      <Button
+        className="px-5 py-3"
+        func={createShift}
         disabled={createShiftMutation.isPending}
       >
         {createShiftMutation.isPending ? "Creating..." : "Create Shift"}
-      </button>
+      </Button>
       <div className="mx-3 flex flex-col">
         <input
-          className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3"
+          className="bg-bg text-text border-2 border-primary rounded p-3 text-base mb-3 focus:outline-none focus:ring-2 focus:ring-primary"
           placeholder={String(month)}
           id="month"
+          type="number"
+          min="1"
+          max="12"
+          inputMode="numeric"
+          pattern="[0-9]*"
           onChange={(event) => setMonth(Number(event.target.value))}
         />
-        <button
-          className="inline-block px-5 py-3 bg-button m-4 text-base font-bold text-text border-none rounded cursor-pointer"
-          onClick={createMonth}
+
+        <Button
+          className="px-5 py-3"
+          func={createMonth}
           disabled={createMonthMutation.isPending}
         >
           {createMonthMutation.isPending ? "Creating..." : "Create Shift Month"}
-        </button>
+        </Button>
       </div>
     </div>
   );

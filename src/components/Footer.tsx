@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <div className="flex fixed bottom-1 left-0 shadow w-full text-5xl bg-bg border-t border-bg-lighter p-4 justify-evenly z-10">
+    <div className="flex fixed bottom-0 left-0 shadow w-full text-5xl bg-bg border-t border-bg-lighter p-4 justify-evenly z-10">
       <a href="/shiftPlan">
         <i
           aria-hidden

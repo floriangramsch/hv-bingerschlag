@@ -4,6 +4,7 @@ import Survey from "@/components/Survey";
 import React from "react";
 import { TSurvey } from "../helpers/types";
 import { useQuery } from "@tanstack/react-query";
+import Loading from "@/components/Loading";
 
 export default function SurveyOverview() {
   const {
@@ -21,7 +22,7 @@ export default function SurveyOverview() {
     },
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
   if (error) return <div>Error loading surveys</div>;
 
   return (

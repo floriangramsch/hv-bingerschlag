@@ -5,6 +5,7 @@ import { convertDate } from "../helpers/functions";
 import { TShiftsToAssign } from "../helpers/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { bread, Toast } from "@/components/ui/Toast";
+import Loading from "@/components/Loading";
 
 export default function ShiftAssignment() {
   const queryClient = useQueryClient();
@@ -69,7 +70,7 @@ export default function ShiftAssignment() {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
   if (error) return <div>Error loading surveys</div>;
 
   return (

@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MouseEvent, useState } from "react";
 import { bread, Toast } from "./ui/Toast";
 import Confirm from "./ui/Confirm";
+import Loading from "./Loading";
 
 export default function Login({
   setName,
@@ -95,7 +96,7 @@ export default function Login({
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
   if (error) return <div>Error loading users</div>;
 
   return (

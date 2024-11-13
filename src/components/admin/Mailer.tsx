@@ -23,6 +23,7 @@ export default function Mailer() {
       <button
         className="inline-block px-5 py-3 bg-button m-4 text-base font-bold text-text border-none rounded cursor-pointer"
         onClick={() => sendTelegramMessage()}
+        disabled
       >
         Send Mails
       </button>

@@ -7,6 +7,7 @@ import "@/app/calendar.css";
 import { useCallback, useEffect, useState } from "react";
 import { TCombinedEvents, TEvents } from "../helpers/types";
 import { useQuery } from "@tanstack/react-query";
+import Loading from "@/components/Loading";
 
 const localizer = momentLocalizer(moment);
 
@@ -58,7 +59,7 @@ const BarCalendar = () => {
     },
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
   if (error) return <div>Error loading users</div>;
 
   return (

@@ -83,8 +83,8 @@ export default function Page() {
   return (
     <>
       {isAdmin && (
-        <div>
-          <form className="flex flex-col" onSubmit={submit}>
+        <div className="p-2">
+          <form className="flex flex-col gap-2" onSubmit={submit}>
             <Input
               label="First Name"
               name="firstName"
@@ -103,7 +103,7 @@ export default function Page() {
               value={formData.email}
               onChange={handleChange}
             />
-            <Button className="m-1" type="submit">
+            <Button className="mt-4" type="submit">
               Update
             </Button>
           </form>

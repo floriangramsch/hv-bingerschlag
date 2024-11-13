@@ -6,6 +6,7 @@ import { TAssignedShifts } from "../helpers/types";
 import { useQuery } from "@tanstack/react-query";
 import useIsAdmin from "../helpers/useIsAdmin";
 import { Toast } from "@/components/ui/Toast";
+import Loading from "@/components/Loading";
 
 export default function ShiftPlan() {
   const [month, setMonth] = useState(() => getMonth());
@@ -79,11 +80,11 @@ export default function ShiftPlan() {
     return monthNames[month - 1] + " " + year;
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
   if (error) return <div>Error loading shifts</div>;
 
   return (
-    <>
+    <div className="p-2">
       <div className="text-3xl mb-3 flex flex-col">
         <div className="flex justify-center text-4xl">{convertMonthName()}</div>
         {special && (
@@ -166,6 +167,6 @@ export default function ShiftPlan() {
           )}
       </div>
       <Toast />
-    </>
+    </div>
   );
 }
