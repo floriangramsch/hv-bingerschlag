@@ -1,16 +1,62 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-const useIsAdmin = () => {
+export default function useIsAdmin() {
   return useQuery<boolean>({
     queryKey: ["isAdmin"],
     queryFn: async () => {
-      if (typeof window !== "undefined") {
-        const storedIsAdmin = localStorage.getItem("isAdmin");
-        return storedIsAdmin === "true";
-      }
-      return false;
+      const token = localStorage.getItem("token");
+      if (!token) return false;
+      const res = await fetch("/api/auth/admin", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const { success } = await res.json();
+      return success || false;
     },
   });
-};
+}
 
-export default useIsAdmin;
+export function useLogin() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (password: string) => {
+      const response = await fetch("/api/auth/admin", {
+        method: "POST",
+        body: JSON.stringify(password),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      if (data.result) {
+        localStorage.setItem("token", data.token);
+      } else {
+        localStorage.removeItem("token");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+    },
+    onError: (error: Error) => {
+      alert(error.message);
+      const pwInput = document.getElementById("password") as HTMLInputElement;
+      pwInput.value = "";
+    },
+  });
+}
+
+export function useLogout() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      localStorage.removeItem("token");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+    },
+  });
+}

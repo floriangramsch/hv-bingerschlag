@@ -210,9 +210,7 @@ export const getSurveys = async () => {
 };
 
 export const login = async (pw: string) => {
-  if (pw === process.env.ADMIN_PW) {
-    return true;
-  } else return false;
+  return pw === process.env.ADMIN_PW;
 };
 
 export const addUser = async (user: any) => {

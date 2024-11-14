@@ -5,67 +5,31 @@ import ShiftCreation from "@/components/admin/ShiftCreation";
 import UserCreation from "@/components/admin/UserCreation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { KeyboardEvent } from "react";
-import useIsAdmin from "../helpers/useIsAdmin";
+import useIsAdmin, { useLogin, useLogout } from "../helpers/useIsAdmin";
 import { bread, Toast } from "@/components/ui/Toast";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Loading from "@/components/Loading";
 
 export default function Admin() {
-  const queryClient = useQueryClient();
-
   const { data: isAdmin, isLoading, error } = useIsAdmin();
-
-  const loginMutation = useMutation({
-    mutationFn: async (password: string) => {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify(password),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const success = await response.json();
-      if (success) {
-        localStorage.setItem("isAdmin", "true");
-        return true;
-      } else {
-        throw new Error("Falsches Password!");
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
-    },
-    onError: (error: Error) => {
-      alert(error.message);
-      const pwInput = document.getElementById("password") as HTMLInputElement;
-      pwInput.value = "";
-    },
-  });
+  const loginMutation = useLogin();
+  const logoutMutation = useLogout();
 
   const loginAdmin = () => {
     const password = (document.getElementById("password") as HTMLInputElement)
       ?.value;
-    loginMutation.mutate(password);
+    loginMutation.mutate(password, {
+      onError: () =>
+        ((document.getElementById("password") as HTMLInputElement).value = ""),
+    });
   };
 
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      const password = (document.getElementById("password") as HTMLInputElement)
-        ?.value;
-      loginMutation.mutate(password);
+      loginAdmin();
     }
   };
-
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      localStorage.setItem("isAdmin", "false");
-      return false;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
-    },
-  });
 
   if (isLoading) return <Loading />;
   if (error) return <div>Error loading admin status</div>;
