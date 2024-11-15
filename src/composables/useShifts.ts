@@ -36,6 +36,7 @@ export function useRemoveShift() {
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ["shifts"] });
     },
+    onError: (e) => bread(e.message),
   });
 }
 
