@@ -16,6 +16,9 @@ const config: Config = {
         secondory: "#1f2b37",
         button: "#007bff",
       },
+      padding: {
+        safe: "env(safe-area-inset-bottom)",
+      },
     },
   },
   plugins: [],
