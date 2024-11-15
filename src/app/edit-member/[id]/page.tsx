@@ -9,7 +9,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useGetUser, useUpdateUserMutation } from "@/composables/useUsers";
 
 export default function Page() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
 
   const { data: isAdmin } = useIsAdmin();
 
@@ -24,9 +24,9 @@ export default function Page() {
   useEffect(() => {
     if (member) {
       setFormData({
-        firstName: member.first_name,
-        lastName: member.last_name,
-        email: member.email,
+        firstName: member.first_name ?? "",
+        lastName: member.last_name ?? "",
+        email: member.email ?? "",
       });
     }
   }, [member]);
