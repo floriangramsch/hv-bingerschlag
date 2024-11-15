@@ -1,4 +1,4 @@
-import useSendTelegram from "@/app/helpers/useSendTelegram";
+import useSendTelegram from "@/composables/useSendTelegram";
 import mysql, { RowDataPacket } from "mysql2/promise";
 
 // Erstelle eine Verbindung zur MariaDB-Datenbank

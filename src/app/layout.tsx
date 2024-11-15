@@ -47,8 +47,8 @@ export default function RootLayout({
         <meta name="theme-color" content="#2c3e50" />
       </head>
       <body className={inter.className}>
-        <div className="flex flex-col justify-center">
-          <div className="items-center mb-28">
+        <div className="flex flex-col justify-center min-h-screen">
+          <div className="flex-grow items-center ">
             <QueryProvider>{children}</QueryProvider>
           </div>
           <Footer />

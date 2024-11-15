@@ -1,3 +1,4 @@
+import { TAssignedShifts, TShiftsToAssign } from "@/app/helpers/types";
 import { bread } from "@/components/ui/Toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -10,7 +11,60 @@ export function useGetShift(id: string | string[] | undefined) {
       const shift = shifts[0];
       return shift;
     },
-    enabled: !!id, // Only run the query if id is available
+    enabled: !!id,
+  });
+}
+
+export function useGetAssignedShifts({
+  year,
+  month,
+  special,
+}: {
+  year: number;
+  month: number;
+  special: boolean;
+}) {
+  return useQuery<TAssignedShifts[]>({
+    queryKey: ["assignedShifts", year, month, special],
+    queryFn: async () => {
+      const response = await fetch("/api/shifts/getShifts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ year, month, special }),
+      });
+      return await response.json();
+    },
+  });
+}
+
+export function useAssignShiftsMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (filtered: Record<string, boolean>) => {
+      const response = await fetch("/api/admin/assignShifts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(filtered),
+      });
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      if (data === "Already Full") {
+        bread("Already full");
+      } else {
+        bread("Successfully assigned the shifts!");
+        window.location.href = "/shiftPlan";
+      }
+      queryClient.invalidateQueries({ queryKey: ["surveysToAssign"] });
+    },
+    onError: (error: Error) => {
+      console.error("Fehler beim Hinzufügen der Schichten:", error);
+    },
   });
 }
 

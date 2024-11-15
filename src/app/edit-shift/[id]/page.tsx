@@ -1,6 +1,6 @@
 "use client";
 
-import useIsAdmin from "@/app/helpers/useIsAdmin";
+import useIsAdmin from "@/composables/useAdmin";
 import Button from "@/components/ui/Button";
 import Confirm from "@/components/ui/Confirm";
 import Input from "@/components/ui/Input";
@@ -62,17 +62,16 @@ export default function Page() {
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (id) {
-      updateShiftMutation.mutate({ ...formData, id: id });
-    }
+    if (!id) bread("No Id!");
+    else updateShiftMutation.mutate({ ...formData, id: id });
   };
 
   const removeShift = () => {
-    if (id) {
+    if (!id) bread("No Id!");
+    else
       removeShiftMutation.mutate(id, {
         onSuccess: () => (window.location.href = `/shiftPlan`),
       });
-    }
   };
 
   return (

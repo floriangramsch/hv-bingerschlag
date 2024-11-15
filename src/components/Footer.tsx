@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <div className="flex fixed bottom-0 left-0 shadow w-full text-5xl bg-bg border-t border-bg-lighter p-4 pb-10 justify-evenly z-10">
+    <footer className="flex sticky safe-area-inset bottom-0 left-0 shadow w-full text-4xl bg-bg border-t border-bg-lighter p-4 pb-10 justify-around z-10 pb-safe">
       <a href="/shiftPlan">
         <i
           aria-hidden
@@ -29,6 +29,6 @@ export default function Footer() {
           style={{ color: "#e74c3c" }}
         />
       </a>
-    </div>
+    </footer>
   );
 }

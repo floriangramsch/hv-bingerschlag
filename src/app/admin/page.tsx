@@ -5,7 +5,7 @@ import ShiftCreation from "@/components/admin/ShiftCreation";
 import UserCreation from "@/components/admin/UserCreation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { KeyboardEvent } from "react";
-import useIsAdmin, { useLogin, useLogout } from "../helpers/useIsAdmin";
+import useIsAdmin, { useLogin, useLogout } from "../../composables/useAdmin";
 import { bread, Toast } from "@/components/ui/Toast";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";

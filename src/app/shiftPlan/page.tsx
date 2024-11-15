@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import { convertDate } from "../helpers/functions";
 import { TAssignedShifts } from "../helpers/types";
 import { useQuery } from "@tanstack/react-query";
-import useIsAdmin from "../helpers/useIsAdmin";
+import useIsAdmin from "../../composables/useAdmin";
 import { Toast } from "@/components/ui/Toast";
 import Loading from "@/components/Loading";
+import { useGetAssignedShifts } from "@/composables/useShifts";
 
 export default function ShiftPlan() {
   const [month, setMonth] = useState(() => getMonth());
@@ -30,19 +31,7 @@ export default function ShiftPlan() {
     data: shifts,
     isLoading,
     error,
-  } = useQuery<TAssignedShifts[]>({
-    queryKey: ["assignedShifts", year, month, special],
-    queryFn: async () => {
-      const response = await fetch("/api/shifts/getShifts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ year, month, special }),
-      });
-      return await response.json();
-    },
-  });
+  } = useGetAssignedShifts({ year, month, special });
 
   const changeMonth = (advance: boolean) => {
     if (advance) {

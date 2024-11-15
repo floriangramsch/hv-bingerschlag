@@ -1,4 +1,4 @@
-import useSendTelegram from "@/app/helpers/useSendTelegram";
+import useSendTelegram from "@/composables/useSendTelegram";
 import { addSurvey } from "@/database/database";
 import { NextResponse } from "next/server";
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { bread, Toast } from "@/components/ui/Toast";
+import { useTakeBar } from "@/composables/useBar";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -13,28 +14,7 @@ const BarUsage = () => {
   );
   const [title, setTitle] = useState<string>("");
 
-  const takeBarMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch("/api/events/useBar", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ date, endDate, title }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to use bar");
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      bread("You may use the bar now!");
-      window.location.href = "/barCalendar";
-    },
-    onError: (error: Error) => {
-      alert(error.message);
-    },
-  });
+  const takeBarMutation = useTakeBar();
 
   return (
     <>
@@ -67,7 +47,7 @@ const BarUsage = () => {
       />
       <button
         className="inline-block px-5 py-3 bg-button m-4 text-base font-bold text-text border-none rounded cursor-pointer"
-        onClick={() => takeBarMutation.mutate()}
+        onClick={() => takeBarMutation.mutate({ date, endDate, title })}
         disabled={takeBarMutation.isPending}
       >
         Use Bar

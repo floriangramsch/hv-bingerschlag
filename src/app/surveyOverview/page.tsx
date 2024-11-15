@@ -2,25 +2,11 @@
 
 import Survey from "@/components/Survey";
 import React from "react";
-import { TSurvey } from "../helpers/types";
-import { useQuery } from "@tanstack/react-query";
 import Loading from "@/components/Loading";
+import { useGetSurveys } from "@/composables/useSurveys";
 
 export default function SurveyOverview() {
-  const {
-    data: surveys,
-    isLoading,
-    error,
-  } = useQuery<Record<string, TSurvey[]>>({
-    queryKey: ["surveys"],
-    queryFn: async () => {
-      const response = await fetch("/api/surveys/getSurveys");
-      if (!response.ok) {
-        throw new Error("Failed to fetch surveys");
-      }
-      return await response.json();
-    },
-  });
+  const { data: surveys, isLoading, error } = useGetSurveys();
 
   if (isLoading) return <Loading />;
   if (error) return <div>Error loading surveys</div>;

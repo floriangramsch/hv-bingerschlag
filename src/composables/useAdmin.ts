@@ -1,3 +1,4 @@
+import { bread } from "@/components/ui/Toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function useIsAdmin() {
@@ -42,7 +43,7 @@ export function useLogin() {
       queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
     },
     onError: (error: Error) => {
-      alert(error.message);
+      bread(error.message);
       const pwInput = document.getElementById("password") as HTMLInputElement;
       pwInput.value = "";
     },
@@ -58,5 +59,6 @@ export function useLogout() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
     },
+    onError: (e) => bread(e.message),
   });
 }

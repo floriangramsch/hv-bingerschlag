@@ -1,12 +1,12 @@
 "use client";
 
-import { TSelectUser, TUser } from "@/app/helpers/types";
-import useIsAdmin from "@/app/helpers/useIsAdmin";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { TSelectUser } from "@/app/helpers/types";
+import useIsAdmin from "@/composables/useAdmin";
 import { MouseEvent, useState } from "react";
 import { bread, Toast } from "./ui/Toast";
 import Confirm from "./ui/Confirm";
 import Loading from "./Loading";
+import { useGetUsers, useRetireUser } from "@/composables/useUsers";
 
 export default function Login({
   setName,
@@ -18,26 +18,7 @@ export default function Login({
     undefined
   );
 
-  const queryClient = useQueryClient();
-
-  const {
-    data: users,
-    isLoading,
-    error,
-  } = useQuery<TSelectUser[]>({
-    queryKey: ["members"],
-    queryFn: async () => {
-      const response = await fetch("/api/members/getMembers");
-      const users: TUser[] = await response.json();
-      return users.map((user) => ({
-        value: user.id,
-        label: `${user.first_name} ${user.last_name}`,
-        first_name: user.first_name,
-        registered: user.registered,
-        is_active: user.is_active,
-      }));
-    },
-  });
+  const { data: users, isLoading, error } = useGetUsers();
 
   const { data: isAdmin } = useIsAdmin();
 
@@ -55,33 +36,17 @@ export default function Login({
     if (userIdToRemove) {
       retireUserMutation.mutate(
         { id: userIdToRemove, retire: true },
-        { onSuccess: () => bread("User retired successfully!") }
+        {
+          onSuccess: () => {
+            bread("User retired successfully!");
+            setShowDialog(false);
+          },
+        }
       );
     }
   };
 
-  const retireUserMutation = useMutation({
-    mutationFn: async ({ id, retire }: { id: number; retire: boolean }) => {
-      const response = await fetch("/api/members/retireUser", {
-        method: "PUT",
-        body: JSON.stringify({ id, retire }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to add user");
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      setShowDialog(false);
-      queryClient.refetchQueries({ queryKey: ["members"] });
-    },
-    onError: (error: Error) => {
-      alert(error.message);
-    },
-  });
+  const retireUserMutation = useRetireUser();
 
   const setUser = (user: TSelectUser) => {
     if (user.is_active) {
@@ -91,7 +56,12 @@ export default function Login({
       // set active
       retireUserMutation.mutate(
         { id: user.value, retire: false },
-        { onSuccess: () => bread("Set user successfully active!") }
+        {
+          onSuccess: () => {
+            bread("Set user successfully active!");
+            setShowDialog(false);
+          },
+        }
       );
     }
   };

@@ -2,50 +2,15 @@
 
 import React from "react";
 import { convertDate } from "../helpers/functions";
-import { TShiftsToAssign } from "../helpers/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { bread, Toast } from "@/components/ui/Toast";
+import { Toast } from "@/components/ui/Toast";
 import Loading from "@/components/Loading";
+import { useAssignShiftsMutation } from "@/composables/useShifts";
+import { useGetSurveysToAssign } from "@/composables/useSurveys";
 
 export default function ShiftAssignment() {
-  const queryClient = useQueryClient();
+  const { data: shifts, isLoading, error } = useGetSurveysToAssign();
 
-  const {
-    data: shifts,
-    isLoading,
-    error,
-  } = useQuery<TShiftsToAssign>({
-    queryKey: ["surveysToAssign"],
-    queryFn: async () => {
-      const response = await fetch("/api/admin/getSurveysToAssign");
-      return await response.json();
-    },
-  });
-
-  const mutation = useMutation({
-    mutationFn: async (filtered: Record<string, boolean>) => {
-      const response = await fetch("/api/admin/assignShifts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(filtered),
-      });
-      return await response.json();
-    },
-    onSuccess: (data) => {
-      if (data === "Already Full") {
-        window.alert("Already full");
-      } else {
-        bread("Successfully assigned the shifts!");
-        window.location.href = "/shiftPlan";
-      }
-      queryClient.invalidateQueries({ queryKey: ["surveysToAssign"] });
-    },
-    onError: (error: Error) => {
-      console.error("Fehler beim Hinzufügen der Schichten:", error);
-    },
-  });
+  const mutation = useAssignShiftsMutation();
 
   const assignShifts = () => {
     const shiftOptions = Array.from(

@@ -1,6 +1,6 @@
 import { convertDate } from "@/app/helpers/functions";
 import { TSelectUser, TShift } from "@/app/helpers/types";
-import useSendTelegram from "@/app/helpers/useSendTelegram";
+import useSendTelegram from "@/composables/useSendTelegram";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useState } from "react";

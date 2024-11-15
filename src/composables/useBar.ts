@@ -8,8 +8,8 @@ export function useTakeBar() {
       endDate,
       title,
     }: {
-      date: Date;
-      endDate: Date;
+      date: string;
+      endDate: string;
       title: string;
     }) => {
       const response = await fetch("/api/events/useBar", {
@@ -25,11 +25,10 @@ export function useTakeBar() {
       return response.json();
     },
     onSuccess: () => {
-      bread("You may use the bar now!");
       window.location.href = "/barCalendar";
     },
     onError: (error: Error) => {
-      alert(error.message);
+      bread(error.message);
     },
   });
 }

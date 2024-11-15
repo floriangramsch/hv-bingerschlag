@@ -1,37 +1,24 @@
 "use client";
 
-import { TUser } from "@/app/helpers/types";
-import useIsAdmin from "@/app/helpers/useIsAdmin";
+import useIsAdmin from "@/composables/useAdmin";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { bread, Toast } from "@/components/ui/Toast";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Toast } from "@/components/ui/Toast";
 import { useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import { useGetUser, useUpdateUserMutation } from "@/composables/useUsers";
 
 export default function Page() {
   const { id } = useParams();
 
   const { data: isAdmin } = useIsAdmin();
 
-  const queryClient = useQueryClient();
-
-  const { data: member } = useQuery<TUser>({
-    queryKey: ["member", id],
-    queryFn: async () => {
-      // const response = await fetch(`/api/members/getMember/${id}`);
-      const response = await fetch(`/api/members/getMembers`);
-      const users: TUser[] = await response.json();
-      return users.filter((user) => user.id === Number(id))[0];
-    },
-    enabled: !!id, // Only run the query if id is available
-  });
+  const { data: member } = useGetUser(id);
 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    // Füge hier weitere Felder hinzu
   });
 
   useEffect(() => {
@@ -52,32 +39,11 @@ export default function Page() {
     }));
   };
 
-  const updateMemberMutation = useMutation({
-    mutationFn: async (updatedData: typeof formData) => {
-      const response = await fetch(`/api/members/updateMember`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...updatedData, id: id }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to update member");
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ["members"] });
-      bread("User successfully updated!");
-    },
-    onError: (error) => {
-      console.error("Error updating member:", error);
-    },
-  });
+  const updateMemberMutation = useUpdateUserMutation();
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateMemberMutation.mutate(formData);
+    updateMemberMutation.mutate({ updatedData: formData, id });
   };
 
   return (

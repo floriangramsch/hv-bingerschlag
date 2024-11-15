@@ -1,4 +1,4 @@
-import useSendTelegram from "@/app/helpers/useSendTelegram";
+import useSendTelegram from "@/composables/useSendTelegram";
 import { useState } from "react";
 import { bread, Toast } from "../ui/Toast";
 
