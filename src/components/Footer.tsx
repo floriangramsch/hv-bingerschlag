@@ -47,7 +47,7 @@ export default function Footer() {
   const inactiveColor = "#cb6354";
 
   return (
-    <footer className="flex sticky safe-area-inset bottom-0 left-0 shadow w-full text-3xl bg-bg border-t border-bg-lighter p-4 pb-5 justify-around z-10">
+    <footer className="flex sticky safe-area-inset bottom-0 left-0 shadow w-full text-3xl bg-bg border-t border-bg-lighter pt-2 pb-7 justify-around z-10">
       <a href="/shiftPlan">
         <i
           aria-hidden
