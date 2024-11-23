@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bread, Toast } from "../ui/Toast";
 import Input from "../ui/Input";
@@ -89,9 +89,18 @@ const ShiftCreation = () => {
     createMonthMutation.mutate();
   };
 
+  const unfocused = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (unfocused.current) {
+      unfocused.current.focus();
+    }
+  }, []);
+
   return (
     <div className="flex flex-col my-4 border border-secondory rounded p-2 text-text text-xl gap-2 shadow">
       <Toast />
+      <div ref={unfocused} tabIndex={-1} hidden />
       <div>
         <div className="space-x-2">
           <span>Special Event</span>
