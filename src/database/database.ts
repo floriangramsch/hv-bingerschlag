@@ -285,7 +285,9 @@ function getMondaysInOddWeeks(year: number, month: number): Date[] {
 }
 
 export const createMonth = async (month: number) => {
-  const year = 2024;
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
+  const year = month >= currentMonth ? currentYear : currentYear + 1;
 
   const [users] = await pool.query<RowDataPacket[]>("SELECT id from user");
   for (const user of users) {
@@ -337,7 +339,7 @@ export const createMonth = async (month: number) => {
       }
     }
   }
-  return "created Month!";
+  return `Succesfully created Month ${month}.${year}`;
 };
 
 export const getSurveysToAssign = async () => {

@@ -72,8 +72,8 @@ const ShiftCreation = () => {
       }
       return response.json();
     },
-    onSuccess: () => {
-      bread("Successfully created month!");
+    onSuccess: (response: string) => {
+      bread(response);
       queryClient.invalidateQueries({ queryKey: ["shifts"] });
     },
     onError: (error: Error) => {
