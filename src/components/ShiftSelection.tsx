@@ -6,6 +6,7 @@ import React from "react";
 import { useState } from "react";
 import Select from "react-select";
 import Loading from "./Loading";
+import BetterSelect from "./ui/BetterSelect";
 
 export default function ShiftSelection({ user }: { user: TSelectUser }) {
   const [selectedOptions, setSelectedOptions] = useState<
@@ -51,6 +52,7 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
       setSelectedOptions(opts);
       return unassignedShifts;
     },
+    staleTime: 1000 * 60 * 5,
   });
 
   const onSelectChange = (
@@ -89,7 +91,7 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
   const options = [
     { value: "true", label: "Sure can do!" },
     { value: "false", label: "Nope, I'm out!" },
-    { value: "maybe", label: "Only if necessary!" },
+    { value: "maybe", label: "If necessary!" },
     { value: "dontknow", label: "Dont know!" },
   ];
 
@@ -110,53 +112,67 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
   if (error) return <div>Error loading shifts</div>;
 
   return (
-    <>
-      <div className="flex flex-col items-center">
-        <div className="flex text-center justify-center border-none rounded text-xl p-4 mt-1 mb-4 bg-primary font-bold">
-          Welcome {user.first_name}
-        </div>
-        <div className="flex flex-col mb-2">
-          {shifts?.map(
-            ({ id, specialEvent, specialName, date, availability }) => {
-              return (
-                <div
-                  className="flex grid-cols-2 justify-between "
-                  key={id}
+    <div className="flex flex-col items-center">
+      <div className="flex text-center justify-center border-none rounded text-xl p-4 mt-4 mb-4 bg-primary font-bold">
+        Welcome {user.first_name}
+      </div>
+      <div className="flex flex-col mb-2">
+        {shifts?.map(
+          ({ id, specialEvent, specialName, date, availability }) => {
+            return (
+              <div
+                className={`flex grid-cols-2 justify-between items-center p-1 m-0 ${
+                  specialEvent ? "" : ""
+                } `}
+                key={id}
+              >
+                <span
                   style={{
-                    backgroundColor: specialEvent ? "#1f2b37" : "inherit",
+                    paddingRight: "2rem",
                   }}
                 >
-                  <span
-                    style={{
-                      paddingRight: "2rem",
-                    }}
-                  >
-                    {convertDate(new Date(date))}
-                    <br />
-                    {specialName && specialName}
-                  </span>
-                  <Select
-                    id={String(id)}
-                    className="select-control text-black"
-                    classNamePrefix="select"
-                    options={options}
-                    defaultValue={getOptionByAvailability(availability)}
-                    onChange={(e) => e && onSelectChange(id, e)}
-                  />
-                </div>
-              );
-            }
-          )}
-          {shifts && (
-            <button
-              className="inline-block py-2 px-4 m-4 text-lg text-bold text-white bg-button border-none rounded cursor-pointer"
-              onClick={addSurvey}
-            >
-              Submit
-            </button>
-          )}
-        </div>
+                  {convertDate(new Date(date))}
+                  <br />
+                  {specialEvent ? (
+                    <span className="font-bold">Special: </span>
+                  ) : (
+                    ""
+                  )}{" "}
+                  {specialName}
+                </span>
+                <BetterSelect
+                  id={id}
+                  options={options}
+                  onChange={(e) => e && onSelectChange(id, e)}
+                  defaultValue={getOptionByAvailability(availability)}
+                />
+                {/* <Select
+                  id={String(id)}
+                  className="bg-bg text-black border border-primary"
+                  classNamePrefix="select"
+                  options={options}
+                  defaultValue={getOptionByAvailability(availability)}
+                  onChange={(e) => e && onSelectChange(id, e)}
+                /> */}
+                {/* <Select
+                  id={String(id)}
+                  options={options}
+                  value={getOptionByAvailability(availability)}
+                  onChange={(e: { value: string; label: string }) => e && onSelectChange(id, e)}
+                /> */}
+              </div>
+            );
+          }
+        )}
+        {shifts && (
+          <button
+            className="inline-block py-2 px-4 m-4 text-lg text-bold text-white bg-button border-none rounded cursor-pointer"
+            onClick={addSurvey}
+          >
+            Submit
+          </button>
+        )}
       </div>
-    </>
+    </div>
   );
 }

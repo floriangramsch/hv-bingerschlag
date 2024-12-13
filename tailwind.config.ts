@@ -20,6 +20,17 @@ const config: Config = {
         safe: "env(safe-area-inset-bottom)",
       },
     },
+    animation: {
+      fade: 'fadeOut 5s ease-in-out',
+    },
+
+    // that is actual animation
+    keyframes: theme => ({
+      fadeOut: {
+        '0%': { backgroundColor: "#e74c3c" },
+        '100%': { backgroundColor: "#000000" },
+      },
+    }),
   },
   plugins: [],
 };

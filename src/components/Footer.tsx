@@ -27,7 +27,7 @@ export default function Footer() {
   };
 
   useEffect(() => {
-    const timeout = 1800;
+    const timeout = 1000;
     if (test("/shiftPlan")) {
       setActiveClass("shiftPlan");
       setTimeout(() => setActiveClass(null), timeout);
@@ -43,8 +43,9 @@ export default function Footer() {
     }
   }, [path]);
 
-  const activeColor = "#e74c3c";
-  const inactiveColor = "#cb6354";
+  const activeColor = "#e73c49";
+  const inactiveColor = "#e74c3c";
+  // const inactiveColor = "#cb6354";
 
   return (
     <footer className="flex sticky safe-area-inset bottom-0 left-0 shadow w-full text-3xl bg-bg border-t border-bg-lighter pt-2 pb-7 justify-around z-10">

@@ -86,3 +86,8 @@ export type TEvents = {
   shifts: Record<number, TEvent>;
   usage: Record<number, TEvent>;
 };
+
+export type TItem = {
+  value: string;
+  label: string;
+};

@@ -45,6 +45,7 @@ export const getUnassignedShifts = async (user_id: number) => {
   const sql = `
     SELECT * FROM shift
     WHERE (worker1_id IS NULL OR worker2_id IS NULL) AND date >= CURDATE()
+    ORDER BY special_event ASC
   `;
 
   const [shifts] = await pool.query<RowDataPacket[]>(sql);
