@@ -13,20 +13,20 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: SSH into Raspberry Pi and pull changes
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.PI_HOST }}
-          username: ${{ secrets.PI_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            set -e  # Stop execution on any error
-            cd /home/pi/Deployed/hv-bingerschlag
-            echo "Pulling....."
-            git pull
-            echo "Installing....."
-            npm install
-            echo "Building....."
-            npm run build
-            echo "Restarting systemctl..."
-            sudo systemctl restart hvbingerschlag.service
+      # - name: SSH into Raspberry Pi and pull changes
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.PI_HOST }}
+      #     username: ${{ secrets.PI_USERNAME }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     script: |
+      #       set -e  # Stop execution on any error
+      #       cd /home/pi/Deployed/hv-bingerschlag
+      #       echo "Pulling....."
+      #       git pull
+      #       echo "Installing....."
+      #       npm install
+      #       echo "Building....."
+      #       npm run build
+      #       echo "Restarting systemctl..."
+      #       sudo systemctl restart hvbingerschlag.service
