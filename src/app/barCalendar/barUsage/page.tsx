@@ -1,7 +1,6 @@
 "use client";
 
 import Input from "@/components/ui/Input";
-import { Toast } from "@/components/ui/Toast";
 import { useTakeBar } from "@/composables/useBar";
 import { useState } from "react";
 
@@ -18,7 +17,6 @@ const BarUsage = () => {
 
   return (
     <>
-      <Toast />
       <div className="mt-28 flex flex-col justify-center border-2 border-primary p-5 rounded shadow">
         <span>Title</span>
         <Input
@@ -27,13 +25,6 @@ const BarUsage = () => {
             setTitle(event.target.value);
           }}
         />
-        {/* <input
-          className="text-black"
-          value={title}
-          onChange={(event) => {
-            setTitle(event.target.value);
-          }}
-        /> */}
         <span>Start Time</span>
         <input
           type="datetime-local"

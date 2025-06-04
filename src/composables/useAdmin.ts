@@ -38,14 +38,12 @@ export function useLogin() {
       } else {
         localStorage.removeItem("token");
       }
+      if (data.message === "Wrong password") {
+        throw new Error("Wrong password");
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
-    },
-    onError: (error: Error) => {
-      bread(error.message);
-      const pwInput = document.getElementById("password") as HTMLInputElement;
-      pwInput.value = "";
     },
   });
 }

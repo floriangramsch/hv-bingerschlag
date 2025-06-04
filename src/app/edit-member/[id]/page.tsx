@@ -3,7 +3,6 @@
 import useIsAdmin from "@/composables/useAdmin";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { Toast } from "@/components/ui/Toast";
 import { useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { useGetUser, useUpdateUserMutation } from "@/composables/useUsers";
@@ -73,7 +72,6 @@ export default function Page() {
               Update
             </Button>
           </form>
-          <Toast />
         </div>
       )}
     </>

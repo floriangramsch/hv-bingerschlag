@@ -2,10 +2,7 @@
 
 import React, { useState } from "react";
 import { convertDate } from "../helpers/functions";
-import { TAssignedShifts } from "../helpers/types";
-import { useQuery } from "@tanstack/react-query";
 import useIsAdmin from "../../composables/useAdmin";
-import { Toast } from "@/components/ui/Toast";
 import Loading from "@/components/Loading";
 import { useGetAssignedShifts } from "@/composables/useShifts";
 
@@ -155,7 +152,6 @@ export default function ShiftPlan() {
             )
           )}
       </div>
-      <Toast />
     </div>
   );
 }

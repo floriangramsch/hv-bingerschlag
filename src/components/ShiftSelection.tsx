@@ -7,7 +7,7 @@ import { useState } from "react";
 import Loading from "./Loading";
 import BetterSelect from "./ui/BetterSelect";
 import { useAddSurvery } from "@/composables/useSurveys";
-import { bread, Toast } from "./ui/Toast";
+import { bread } from "./ui/Toast";
 
 export default function ShiftSelection({ user }: { user: TSelectUser }) {
   const [selectedOptions, setSelectedOptions] = useState<
@@ -77,7 +77,6 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
       {
         onSettled: () => setLocked(false),
         onSuccess: () => {
-          bread("Survey added!");
           sendTelegram.mutate(user.first_name + " hat sich eingetragen");
           window.location.href = "/surveyOverview";
         },
@@ -160,7 +159,6 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
             Submit
           </button>
         )}
-        <Toast />
       </div>
     </div>
   );

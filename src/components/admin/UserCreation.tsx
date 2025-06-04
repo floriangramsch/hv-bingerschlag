@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bread, Toast } from "../ui/Toast";
+import { bread } from "../ui/Toast";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
 
@@ -34,7 +34,7 @@ export default function UserCreation() {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (error: Error) => {
-      alert(error.message);
+      bread(error.message);
     },
   });
 
@@ -44,7 +44,6 @@ export default function UserCreation() {
 
   return (
     <>
-      <Toast />
       <div className="my-4 space-y-2 border border-secondory rounded p-2 text-text shadow">
         <Input
           value={firstName}

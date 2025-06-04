@@ -3,29 +3,42 @@
 import Mailer from "@/components/admin/Mailer";
 import ShiftCreation from "@/components/admin/ShiftCreation";
 import UserCreation from "@/components/admin/UserCreation";
-import { KeyboardEvent } from "react";
+import { KeyboardEvent, useState } from "react";
 import useIsAdmin, { useLogin, useLogout } from "../../composables/useAdmin";
 import Button from "@/components/ui/Button";
 import Loading from "@/components/Loading";
+import { bread } from "@/components/ui/Toast";
 
 export default function Admin() {
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [locked, setLocked] = useState(false);
+
   const { data: isAdmin, isLoading, error } = useIsAdmin();
   const loginMutation = useLogin();
   const logoutMutation = useLogout();
 
   const loginAdmin = () => {
-    const password = (document.getElementById("password") as HTMLInputElement)
-      ?.value;
-    loginMutation.mutate(password, {
-      onError: () =>
-        ((document.getElementById("password") as HTMLInputElement).value = ""),
-    });
+    setLocked(true);
+    if (password) {
+      loginMutation.mutate(password, {
+        onSettled: () => setLocked(false),
+        onError: (error: Error) => {
+          bread(error.message);
+          setPassword("");
+        },
+      });
+    }
   };
 
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       loginAdmin();
     }
+  };
+
+  const switchShowPasswort = () => {
+    setShowPassword((oldShowPassword) => !oldShowPassword);
   };
 
   if (isLoading) return <Loading />;
@@ -58,14 +71,35 @@ export default function Admin() {
             Admin Area
           </div>
           <div className="mt-28 flex flex-col items-center bg-bg text-text border-2 border-primary rounded p-5">
-            <input
-              className="h-8 bg-bg border border-primary rounded text-text text-center"
-              type="password"
-              name="password"
-              id="password"
-              onKeyDown={handleKeyPress}
-            />
-            <Button className="px-5 py-3 mt-4" func={loginAdmin}>
+            <div className="relative flex justify-center items-center">
+              <input
+                className="p-1 text-xl text-text bg-bg border border-primary rounded text-center focus:outline-none focus:ring-2 focus:ring-primary"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                id="password"
+                onKeyDown={handleKeyPress}
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+              />
+              <div
+                onClick={switchShowPasswort}
+                className={`absolute right-3 cursor-pointer ${
+                  showPassword ? "fa-eye" : "fa-cat"
+                }`}
+              >
+                <i
+                  aria-hidden
+                  className={`fa-solid text-text ${
+                    showPassword ? "fa-eye" : "fa-eye-slash"
+                  }`}
+                />
+              </div>
+            </div>
+            <Button
+              className="px-5 py-3 mt-4"
+              func={loginAdmin}
+              disabled={loginMutation.isPending || locked}
+            >
               Login
             </Button>
           </div>

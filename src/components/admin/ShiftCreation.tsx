@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bread, Toast } from "../ui/Toast";
+import { bread } from "../ui/Toast";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
+import {
+  useCreateMonthMutation,
+  useCreateShiftMutation,
+} from "@/composables/useShifts";
 
 const ShiftCreation = () => {
-  const queryClient = useQueryClient();
   const [date, setDay] = useState(getTodayDate());
   const [endDate, setEndDay] = useState(getTodayDate());
   const [month, setMonth] = useState<number>(getNextMonth());
@@ -34,59 +36,27 @@ const ShiftCreation = () => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
-  const createShiftMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch("/api/admin/createShift", {
-        method: "POST",
-        body: JSON.stringify({ date, endDate, specialEvent, eventName }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to create shift");
-      }
-      return response.json();
-    },
-    onSuccess: (msg: string) => {
-      bread(msg);
-      setMonth(getNextMonth());
-      queryClient.invalidateQueries({ queryKey: ["shifts"] });
-    },
-    onError: (error: Error) => {
-      alert(error.message);
-    },
-  });
-
-  const createMonthMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch("/api/admin/createMonth", {
-        method: "POST",
-        body: JSON.stringify(month),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to create month");
-      }
-      return response.json();
-    },
-    onSuccess: (response: string) => {
-      bread(response);
-      queryClient.invalidateQueries({ queryKey: ["shifts"] });
-    },
-    onError: (error: Error) => {
-      alert(error.message);
-    },
-  });
+  const createShiftMutation = useCreateShiftMutation();
+  const createMonthMutation = useCreateMonthMutation();
 
   const createShift = () => {
-    createShiftMutation.mutate();
+    createShiftMutation.mutate(
+      { date, endDate, specialEvent, eventName },
+      {
+        onSuccess: (msg: string) => {
+          bread(msg);
+          // setMonth(getNextMonth());
+        },
+      }
+    );
   };
 
   const createMonth = () => {
-    createMonthMutation.mutate();
+    createMonthMutation.mutate(month, {
+      onSuccess: (msg: string) => {
+        bread(msg);
+      },
+    });
   };
 
   const unfocused = useRef<HTMLDivElement>(null);
@@ -99,7 +69,6 @@ const ShiftCreation = () => {
 
   return (
     <div className="flex flex-col my-4 border border-secondory rounded p-2 text-text text-xl gap-2 shadow">
-      <Toast />
       <div ref={unfocused} tabIndex={-1} hidden />
       <div>
         <div className="space-x-2">

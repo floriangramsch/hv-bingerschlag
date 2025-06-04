@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button";
 import Confirm from "@/components/ui/Confirm";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
-import { bread, Toast } from "@/components/ui/Toast";
+import { bread } from "@/components/ui/Toast";
 import {
   useGetShift,
   useRemoveShift,
@@ -143,7 +143,6 @@ export default function Page() {
               Delete Shift?
             </Confirm>
           </form>
-          <Toast />
         </>
       )}
     </>

@@ -53,7 +53,7 @@ export function useRetireUser() {
       queryClient.refetchQueries({ queryKey: ["members"] });
     },
     onError: (error: Error) => {
-      alert(error.message);
+      bread(error.message);
     },
   });
 }

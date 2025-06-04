@@ -58,7 +58,7 @@ export default function Login({
         { id: user.value, retire: false },
         {
           onSuccess: () => {
-            bread("Set user successfully active!");
+            bread("User can work now!");
             setShowDialog(false);
           },
         }
@@ -95,8 +95,14 @@ export default function Login({
                     } border border-bg-lighter flex justify-center items-center`}
                     key={user.value}
                     onClick={() => setUser(user)}
+                    title={user.first_name}
                   >
-                    {user.first_name}
+                    <span
+                      className="w-full px-1 text-center text-sm break-words line-clamp-2"
+                      title={user.first_name}
+                    >
+                      {user.first_name}
+                    </span>
                     {isAdmin && (
                       <>
                         <div className="absolute right-1 top-0">
@@ -129,7 +135,6 @@ export default function Login({
       <Confirm isOpen={showDialog} yes={removeUser} no={close}>
         Retire?
       </Confirm>
-      <Toast />
     </div>
   );
 }

@@ -130,3 +130,60 @@ export function useUpdateShift() {
     },
   });
 }
+
+export const useCreateShiftMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      date: string;
+      endDate: string;
+      specialEvent: boolean;
+      eventName: string;
+    }) => {
+      const response = await fetch("/api/admin/createShift", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create shift");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["shifts"] });
+    },
+    onError: (error: Error) => {
+      console.error(error.message);
+    },
+  });
+};
+
+export function useCreateMonthMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (month: number) => {
+      const response = await fetch("/api/admin/createMonth", {
+        method: "POST",
+        body: JSON.stringify(month),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create month");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["shifts"] });
+    },
+    onError: (error: Error) => {
+      bread(error.message);
+    },
+  });
+}
