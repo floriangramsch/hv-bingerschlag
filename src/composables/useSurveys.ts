@@ -1,5 +1,5 @@
 import { TShiftsToAssign, TSurvey } from "@/app/helpers/types";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export function useGetSurveys() {
   return useQuery<Record<string, TSurvey[]>>({
@@ -20,6 +20,23 @@ export function useGetSurveysToAssign() {
     queryFn: async () => {
       const response = await fetch("/api/admin/getSurveysToAssign");
       return await response.json();
+    },
+  });
+}
+
+export function useAddSurvery() {
+  return useMutation({
+    mutationFn: async (data: {
+      userId: number;
+      choices: Record<number, string>;
+    }) => {
+      await fetch("/api/surveys/addSurvey", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([data.userId, data.choices]),
+      });
     },
   });
 }

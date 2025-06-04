@@ -4,14 +4,16 @@ import useSendTelegram from "@/composables/useSendTelegram";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useState } from "react";
-import Select from "react-select";
 import Loading from "./Loading";
 import BetterSelect from "./ui/BetterSelect";
+import { useAddSurvery } from "@/composables/useSurveys";
+import { bread, Toast } from "./ui/Toast";
 
 export default function ShiftSelection({ user }: { user: TSelectUser }) {
   const [selectedOptions, setSelectedOptions] = useState<
     Record<number, string>
   >([]);
+  const [locked, setLocked] = useState(false);
 
   const {
     data: shifts,
@@ -66,26 +68,25 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
   };
 
   const sendTelegram = useSendTelegram();
+  const surveyMutation = useAddSurvery();
 
   const addSurvey = () => {
-    const data = JSON.stringify([user.value, selectedOptions]);
-
-    fetch("/api/surveys/addSurvey", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: data,
-    })
-      .then((response) => response.json())
-      .then(async () => {
-        sendTelegram.mutate(user.first_name + " hat sich eingetragen", {
-          onSuccess: () => {
-            window.location.href = "/surveyOverview";
-          },
-        });
-      })
-      .catch((e) => console.error("Fehler beim Hinzufügen der Umfrage:", e));
+    setLocked(true);
+    surveyMutation.mutate(
+      { userId: user.value, choices: selectedOptions },
+      {
+        onSettled: () => setLocked(false),
+        onSuccess: () => {
+          bread("Survey added!");
+          sendTelegram.mutate(user.first_name + " hat sich eingetragen");
+          window.location.href = "/surveyOverview";
+        },
+        onError: (error) => {
+          bread("There was an error adding your survey: " + error);
+          console.error("There was an error adding your survey: ", error);
+        },
+      }
+    );
   };
 
   const options = [
@@ -146,32 +147,20 @@ export default function ShiftSelection({ user }: { user: TSelectUser }) {
                   onChange={(e) => e && onSelectChange(id, e)}
                   defaultValue={getOptionByAvailability(availability)}
                 />
-                {/* <Select
-                  id={String(id)}
-                  className="bg-bg text-black border border-primary"
-                  classNamePrefix="select"
-                  options={options}
-                  defaultValue={getOptionByAvailability(availability)}
-                  onChange={(e) => e && onSelectChange(id, e)}
-                /> */}
-                {/* <Select
-                  id={String(id)}
-                  options={options}
-                  value={getOptionByAvailability(availability)}
-                  onChange={(e: { value: string; label: string }) => e && onSelectChange(id, e)}
-                /> */}
               </div>
             );
           }
         )}
         {shifts && (
           <button
-            className="inline-block py-2 px-4 m-4 text-lg text-bold text-white bg-button border-none rounded cursor-pointer"
+            className="inline-block py-2 px-4 m-4 text-lg text-bold text-white bg-button border-none rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={addSurvey}
+            disabled={surveyMutation.isPending || locked}
           >
             Submit
           </button>
         )}
+        <Toast />
       </div>
     </div>
   );
