@@ -10,11 +10,11 @@ import {
 } from "@/composables/useShifts";
 
 const ShiftCreation = () => {
-  const [date, setDay] = useState(getTodayDate());
-  const [endDate, setEndDay] = useState(getTodayDate());
+  const [date, setDay] = useState<string>(getTodayDate());
+  const [endDate, setEndDay] = useState<string>(getTodayDate());
   const [month, setMonth] = useState<number>(getNextMonth());
   const [specialEvent, setSpecialEvent] = useState<boolean>(false);
-  const [eventName, setEventName] = useState<string>("barTest");
+  const [eventName, setEventName] = useState<string>("Bar");
 
   function getNextMonth() {
     const currentDate = new Date();
@@ -24,6 +24,11 @@ const ShiftCreation = () => {
       1
     );
     return nextMonth.getMonth() + 1; // Monat beginnt bei 0 zu zählen, daher +1
+  }
+
+  function toMysqlUtcFormat(dateString: string) {
+    const localDate = new Date(dateString);
+    return localDate.toISOString().slice(0, 19).replace("T", " ");
   }
 
   function getTodayDate() {
@@ -41,7 +46,12 @@ const ShiftCreation = () => {
 
   const createShift = () => {
     createShiftMutation.mutate(
-      { date, endDate, specialEvent, eventName },
+      {
+        date: toMysqlUtcFormat(date),
+        endDate: toMysqlUtcFormat(endDate),
+        specialEvent,
+        eventName,
+      },
       {
         onSuccess: (msg: string) => {
           bread(msg);

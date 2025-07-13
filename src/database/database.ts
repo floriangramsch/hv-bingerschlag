@@ -225,11 +225,19 @@ export const addUser = async (user: any) => {
   return "created User!";
 };
 
-export const createShift = async (shift: any) => {
+export const createShift = async (shift: {
+  date: string; // "YYYY-MM-DD HH:mm:ss" (UTC!)
+  endDate: string;
+  specialEvent: boolean;
+  eventName: string;
+}) => {
   const { date, endDate, specialEvent, eventName } = shift;
 
   // Validate that date is before endDate
-  if (new Date(date) >= new Date(endDate)) {
+  const startUtc = new Date(date + "Z");
+  const endUtc = new Date(endDate + "Z");
+
+  if (startUtc >= endUtc) {
     return "Start should be before End";
   }
 

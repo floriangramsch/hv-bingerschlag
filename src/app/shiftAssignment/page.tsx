@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { convertDate } from "../helpers/functions";
-import { Toast } from "@/components/ui/Toast";
 import Loading from "@/components/Loading";
 import { useAssignShiftsMutation } from "@/composables/useShifts";
 import { useGetSurveysToAssign } from "@/composables/useSurveys";
@@ -28,8 +27,7 @@ export default function ShiftAssignment() {
   const mutation = useAssignShiftsMutation();
 
   const assignShifts = () => {
-    console.log(checkedMap);
-    // mutation.mutate(checkedMap);
+    mutation.mutate(checkedMap);
   };
 
   const handleUserItemClick = (surveyId: string) => {
